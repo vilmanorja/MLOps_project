@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./src/bank_full_project"
+    ]
+}
