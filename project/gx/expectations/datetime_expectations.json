@@ -1,0 +1,57 @@
+{
+  "data_asset_type": null,
+  "expectation_suite_name": "datetime_expectations",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_match_strftime_format",
+      "kwargs": {
+        "column": "customer_since",
+        "strftime_format": "%Y-%m-%d"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_strftime_format",
+      "kwargs": {
+        "column": "date_of_birth",
+        "strftime_format": "%Y-%m-%d"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_strftime_format",
+      "kwargs": {
+        "column": "birth_in_corp_date",
+        "strftime_format": "%Y-%m-%d"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_strftime_format",
+      "kwargs": {
+        "column": "legal_iss_date",
+        "strftime_format": "%Y-%m-%d"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_strftime_format",
+      "kwargs": {
+        "column": "legal_exp_date",
+        "strftime_format": "%Y-%m-%d"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "customer_since"
+      },
+      "meta": {}
+    }
+  ],
+  "ge_cloud_id": null,
+  "meta": {
+    "great_expectations_version": "0.18.12"
+  }
+}

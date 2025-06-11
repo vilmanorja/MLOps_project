@@ -1,4 +1,4 @@
-"""bank_full_project
+"""project
 """
 
 __version__ = "0.1"

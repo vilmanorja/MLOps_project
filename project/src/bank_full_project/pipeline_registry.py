@@ -23,6 +23,7 @@ from typing import Dict
 from kedro.pipeline import Pipeline, pipeline
 
 from bank_full_project.pipelines import (
+    raw_data_tests as raw_data_tests,
     ingestion as data_ingestion,
     data_unit_tests as data_tests,
     preprocessing_train as preprocess_train,
@@ -42,6 +43,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
     Returns:
         A mapping from a pipeline name to a ``Pipeline`` object.
     """
+    raw_data_tests_pipeline = raw_data_tests.create_pipeline()
     ingestion_pipeline = data_ingestion.create_pipeline()
     data_unit_tests_pipeline = data_tests.create_pipeline()
     split_data_pipeline = split_data.create_pipeline()
@@ -54,6 +56,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
     model_predict_pipeline = model_predict.create_pipeline()
 
     return {
+        "raw_data_tests": raw_data_tests_pipeline,
         "ingestion": ingestion_pipeline,
         "data_unit_tests": data_unit_tests_pipeline,
         "split_data": split_data_pipeline,

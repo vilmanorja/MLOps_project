@@ -4,23 +4,19 @@
 # Link: https://docs.kedro.org/en/stable/data/data_catalog.html
 
 
-
-bank_raw_data:
+customers_raw_data:
   type: pandas.CSVDataset
-  filepath: data/01_raw/bank_data.csv
+  filepath: data/01_raw/Customers.csv
   # load_args:
   #   sep: ';'
-
-
-bank_additional_data:
-  type: pandas.CSVDataset
-  filepath: data/01_raw/bank_data_additional.csv
-
 
 ingested_data:
   type: pandas.CSVDataset
   filepath: data/02_intermediate/ingested_data.csv
 
+reporting_tests_raw:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/data_tests_raw.csv
 
 ref_data:
   type: pandas.CSVDataset

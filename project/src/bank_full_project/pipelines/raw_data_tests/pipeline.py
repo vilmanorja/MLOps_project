@@ -6,16 +6,16 @@ generated using Kedro 0.18.8
 
 from kedro.pipeline import Pipeline, node, pipeline
 
-from .nodes import ingestion
+from .nodes import test_data
 
 def create_pipeline(**kwargs) -> Pipeline:
     return pipeline(
         [
             node(
-                func= ingestion,
-                inputs=["bank_raw_data","bank_additional_data","parameters"],
-                outputs= "ingested_data",
-                name="ingestion",
+                func= test_data,
+                inputs="customers_raw_data",
+                outputs='reporting_tests_raw',
+                name="raw_data_tests",
             ),
 
         ]

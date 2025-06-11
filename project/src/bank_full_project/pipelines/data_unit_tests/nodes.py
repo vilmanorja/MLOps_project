@@ -1,13 +1,9 @@
-"""
-This is a boilerplate pipeline
-generated using Kedro 0.18.8
-"""
-
 import logging
 from typing import Any, Dict, Tuple
 
 import numpy as np
 import pandas as pd
+import os
 
 from great_expectations.core import ExpectationSuite, ExpectationConfiguration
 import great_expectations as gx
@@ -16,7 +12,6 @@ from pathlib import Path
 
 from kedro.config import OmegaConfigLoader
 from kedro.framework.project import settings
-
 
 
 logger = logging.getLogger(__name__)
@@ -68,7 +63,9 @@ def get_validation_results(checkpoint_result):
 
 
 def test_data(df):
-    context = gx.get_context(context_root_dir = "//..//..//gx")
+    full_path = os.getcwd()
+    context = gx.get_context(context_root_dir = full_path.partition('src')[0] + '/gx')
+    # context = gx.get_context(context_root_dir = "//..//..//gx")
     datasource_name = "bank_datasource"
     try:
         datasource = context.sources.add_pandas(datasource_name)
