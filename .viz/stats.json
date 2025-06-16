@@ -1,1 +1,1 @@
-{"customers_raw_data": {"rows": 122212, "columns": 32, "file_size": 32432321}, "reporting_tests_raw": {"rows": 41, "columns": 12, "file_size": 3079}}
+{"customers_raw_data": {"rows": 122212, "columns": 32, "file_size": 32432321}, "loans_raw_data": {"rows": 3640, "columns": 12, "file_size": 425768}, "funds_raw_data": {"rows": 502309, "columns": 3, "file_size": 16018866}, "reporting_tests_raw": {"rows": 57, "columns": 12, "file_size": 4413}}
