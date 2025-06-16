@@ -10,6 +10,14 @@ customers_raw_data:
   # load_args:
   #   sep: ';'
 
+loans_raw_data:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/Loans_20250331.csv
+
+funds_raw_data:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/Funds_Hist_to_20231231.csv
+
 ingested_data:
   type: pandas.CSVDataset
   filepath: data/02_intermediate/ingested_data.csv
