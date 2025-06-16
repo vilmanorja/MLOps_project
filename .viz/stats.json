@@ -1,1 +1,1 @@
-{"customers_raw_data": {"rows": 122212, "columns": 32, "file_size": 32432321}, "ingested_data": {"rows": 122212, "columns": 32, "file_size": 30338468}}
+{"customers_raw_data": {"rows": 122212, "columns": 32, "file_size": 32432321}, "reporting_tests_raw": {"rows": 41, "columns": 12, "file_size": 3079}}

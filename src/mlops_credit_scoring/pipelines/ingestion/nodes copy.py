@@ -6,8 +6,11 @@ import pandas as pd
 from datetime import datetime
 import re
 
-from great_expectations.core import ExpectationSuite, ExpectationConfiguration
+#from great_expectations.core import ExpectationSuite, ExpectationConfiguration
+#from great_expectations.core import ExpectationSuite, ExpectationConfiguration
 
+from great_expectations.core.expectation_suite import ExpectationSuite
+from great_expectations.expectations.expectation_configuration import ExpectationConfiguration
 
 from pathlib import Path
 
@@ -40,13 +43,14 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
 
     # numerical features
     if feature_group == 'numerical_features':
+
         for i in ['no_of_dependents', 'segment_id', 'industry_id', 'legal_doc_name1_id', 'new_id']:
-                expectation_suite_bank.add_expectation(
-                    ExpectationConfiguration(
-                        expectation_type="expect_column_values_to_be_of_type",
-                        kwargs={"column": i, "type_": "int64"},
-                    )
+            expectation_suite_bank.add_expectation(
+                ExpectationConfiguration(
+                    expectation_type="expect_column_values_to_be_of_type",
+                    kwargs={"column": i, "type_": "int64"},
                 )
+            )
         # NewId
         expectation_suite_bank.add_expectation(
             ExpectationConfiguration(
@@ -74,20 +78,19 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
                 )
             )
     # datetime features
-    if feature_group == 'datetime_features':
-        for i in ['customer_since', 'date_of_birth', 'birth_in_corp_date', 'legal_iss_date']:
+    if feature_group == 'datetime_feature':
+        for i in ['date_of_birth', 'birth_in_corp_date']:
             expectation_suite_bank.add_expectation(
                 ExpectationConfiguration(
-                    expectation_type="expect_column_values_to_be_of_type",
-                    kwargs={"column": i, 'type_':"datetime64[ns]"},
+                    expectation_type="expect_column_values_to_be_between",
+                    kwargs={
+                        "column": i,
+                        "min_value": '1700-01-01 00:00:00',
+                        "strict_min": False,
+                        "max_value": None  # No upper bound
+                    },
                 )
             ) 
-            # expectation_suite_bank.add_expectation(
-                # ExpectationConfiguration(
-                #     expectation_type="expect_column_values_to_match_strftime_format",
-                #     kwargs={"column": i, 'strftime_format': '%Y-%m-%d'}
-                # )
-            # )
         # CustomerSince
         expectation_suite_bank.add_expectation(
             ExpectationConfiguration(
@@ -95,14 +98,18 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
                 kwargs={"column": "customer_since"}
             )
         )
-        # legal_exp_date
         expectation_suite_bank.add_expectation(
             ExpectationConfiguration(
-                expectation_type="expect_column_values_to_match_strftime_format",
-                kwargs={"column": 'legal_exp_date', 'strftime_format': '%Y-%m-%d'}
+                expectation_type="expect_column_values_to_be_between",
+                kwargs={
+                    "column": 'customer_since',
+                    "min_value": '2011-02-11 00:00:00',
+                    "strict_min": False,
+                    "max_value": datetime.now().strftime("%Y/%m/%d %H:%M:%S")  # No upper bound
+                },
             )
-        )
-    
+        ) 
+
     # categorical features
     if feature_group == 'categorical_features':
 
@@ -202,14 +209,14 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
                 kwargs={"column": "a_m_l_risk_rating", "value_set": ['Elevado', 'Medio', 'Baixo']},
             )
         ) 
-        for i in ['placebrth', 'ocupation_desc', 'town_country', 'district', 'legal_iss_auth']:
+        for i in ['placebrth', 'ocupation_desc', 'town_country', 'district', 'legal_iss_auth', 'legal_exp_date']:
             expectation_suite_bank.add_expectation(
                 ExpectationConfiguration(
                     expectation_type="expect_column_values_to_be_of_type",
                     kwargs={"column": i, "type_": "object"},
                 )
             )
-        
+     
     return expectation_suite_bank
 
 
@@ -312,24 +319,14 @@ def ingestion(
     """
 
     logger.info(f"The dataset contains {len(df.columns)} columns.")
-    df.columns = [re.sub(r'(?<!^)(?=[A-Z])', '_', col).lower() for col in df.columns]
-    df.columns = df.columns.str.replace('.', '', regex=False)
-    logger.info(f"{df.columns}")
 
-    def safe_parse1(val):
-        try:
-            if pd.isna(val):
-                return None
-            val_str = str(int(val))  # Convert float like 20250101.0 to '20250101'
-            return datetime.strptime(val_str, "%Y-%m-%d")#.strftime('%Y-%m-%d')
-        except ValueError:
-            return None
+    for c in ['CustomerSince', 'DateOfBirth', 'BirthInCorpDate']:
+        df[c] = pd.to_datetime(df[c], format = "%Y-%m-%d", errors="coerce")
+        df[c] = df[c].apply(
+            lambda x: x.strftime('%Y-%m-%d') if pd.notnull(x) else None
+        )
 
-    for c in ['customer_since', 'date_of_birth', 'birth_in_corp_date']:
-        df[c] = df[c].fillna('1970-01-01')
-        df[c] = df[c].apply(safe_parse1)
-
-    def safe_parse2(val):
+    def safe_parse(val):
         try:
             if pd.isna(val):
                 return None
@@ -338,22 +335,21 @@ def ingestion(
         except ValueError:
             return None  # Or return None
 
-    for c in ['legal_iss_date', 'legal_exp_date']:
+    for c in ['LegalIssDate', 'LegalExpDate']:
         df[c] = df[c].str.split('ý').str[-1]
-        df[c] = df[c].fillna('19700101') 
-        df[c] = df[c].apply(safe_parse2)
+        df[c] = df[c].apply(safe_parse)
 
-    df['legal_exp_date'] = df['legal_exp_date'].apply(lambda x: x.strftime('%Y-%m-%d') if pd.notnull(x) else None)
-
-    for c in ['no_of_dependents', 'segment_id', 'industry_id', 'legal_doc_name1_id']:
+    for c in ['NoOfDependents', 'SegmentId', 'IndustryId', 'LegalDocName1Id']:
         # Convert to Int64 (nullable int)
         df[c] = df[c].fillna(-1)
         df[c] = df[c].astype('int')
 
+    df.columns = [re.sub(r'(?<!^)(?=[A-Z])', '_', col).lower() for col in df.columns]
+    df.columns = df.columns.str.replace('.', '', regex=False)
+    logger.info(f"{df.columns}")
     numerical_features = df.select_dtypes('number').columns.tolist()
     categorical_features = df.select_dtypes(include=['object']).columns.tolist()
-    categorical_features.remove('legal_exp_date')
-    datetime_features = ['customer_since', 'date_of_birth', 'birth_in_corp_date', 'legal_iss_date', 'legal_exp_date'] #df.select_dtypes(include=['datetime']).columns.tolist()
+    datetime_features = ['customer_since', 'date_of_birth', 'birth_in_corp_date', 'legal_iss_date'] #df.select_dtypes(include=['datetime']).columns.tolist()
     
     for c in categorical_features:
         df[c] = df[c].apply(lambda x: x if pd.notnull(x) else None)
@@ -371,7 +367,7 @@ def ingestion(
     df_datetime = df[datetime_features].reset_index()
 
     logger.info(f"Number of columns processed: {len(df_numeric.columns) + len(df_categorical.columns) + len(df_datetime.columns)} columns.")
-    logger.info(f"{categorical_features}")
+    logger.info(f"{df_datetime.dtypes}")
 
 
     if parameters["to_feature_store"]:
@@ -394,7 +390,7 @@ def ingestion(
 
         object_fs_datetime_features = to_feature_store(
             df_datetime,"datetime_features_project",
-            1,"Datetime Features",
+            1,"Target Features",
             datetime_feature_descriptions,
             validation_expectation_suite_datetime,
             credentials["feature_store"]

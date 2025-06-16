@@ -22,7 +22,7 @@
 from typing import Dict
 from kedro.pipeline import Pipeline, pipeline
 
-from bank_full_project.pipelines import (
+from mlops_credit_scoring.pipelines import (
     raw_data_tests as raw_data_tests,
     ingestion as data_ingestion,
     data_unit_tests as data_tests,

@@ -2,6 +2,9 @@ import logging
 from typing import Any, Dict, Tuple
 
 from great_expectations.core import ExpectationSuite, ExpectationConfiguration
+#from great_expectations.core.expectation_suite import ExpectationSuite
+#from great_expectations.expectations.expectation_configuration import ExpectationConfiguration
+
 import great_expectations as gx
 import os
 

@@ -3,12 +3,12 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "bank_full_project"
+name = "mlops-credit-scoring"
 readme = "README.md"
 dynamic = ["dependencies", "version"]
 
 [project.scripts]
-bank-full-project = "bank_full_project.__main__:main"
+mlops-credit-scoring = "mlops_credit_scoring.__main__:main"
 
 [project.entry-points."kedro.hooks"]
 
@@ -27,15 +27,17 @@ docs = [
 
 [tool.setuptools.dynamic]
 dependencies = {file = "requirements.txt"}
-version = {attr = "bank_full_project.__version__"}
+
+
+version = {attr = "mlops_credit_scoring.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
 namespaces = false
 
 [tool.kedro]
-package_name = "bank_full_project"
-project_name = "bank_full_project"
+package_name = "mlops_credit_scoring"
+project_name = "mlops_credit_scoring"
 kedro_init_version = "0.19.5"
 tools = ['Linting', 'Testing', 'Custom Logging', 'Documentation', 'Data Structure']
 example_pipeline = "False"
@@ -44,7 +46,7 @@ source_dir = "src"
 [tool.pytest.ini_options]
 addopts = """
 --cov-report term-missing \
---cov src/bank_full_project -ra"""
+--cov src/mlops_credit_scoring -ra"""
 
 [tool.coverage.report]
 fail_under = 0
@@ -67,3 +69,6 @@ select = [
     "T201", # Print Statement
 ]
 ignore = ["E501"]  # Ruff format takes care of line-too-long
+
+[tool.kedro_telemetry]
+project_id = "6ec2b770976547908b2c182b8c7dca57"
