@@ -118,7 +118,13 @@ fluent_datasources:
   project_data_raw:
     type: pandas
     assets:
-      raw_data:
+      customers_raw:
+        type: dataframe
+        batch_metadata: {}
+      loans_raw:
+        type: dataframe
+        batch_metadata: {}
+      funds_raw:
         type: dataframe
         batch_metadata: {}
 notebooks:
