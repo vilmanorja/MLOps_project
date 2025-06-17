@@ -3,111 +3,69 @@
 # Documentation for this file format can be found in "The Data Catalog"
 # Link: https://docs.kedro.org/en/stable/data/data_catalog.html
 
-
+# Raw data
 customers_raw_data:
   type: pandas.CSVDataset
   filepath: data/01_raw/Customers.csv
-  # load_args:
-  #   sep: ';'
 
 loans_raw_data:
   type: pandas.CSVDataset
-  filepath: data/01_raw/Loans_20250331.csv
+  filepath: data/01_raw/Loans_20240131.csv
+
+loans_hist_raw_data:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/Loans_Hist_to_20240331.csv
 
 funds_raw_data:
   type: pandas.CSVDataset
-  filepath: data/01_raw/Funds_Hist_to_20231231.csv
+  filepath: data/01_raw/Funds_Hist_to_20240331.csv
 
+transactions_raw_data:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/Transactions_to_20240331.csv
+
+
+#Ingested ---we should create for each of the datsets, as we did for customers
 ingested_data:
   type: pandas.CSVDataset
   filepath: data/02_intermediate/ingested_data.csv
+
+
+#03_primary data
+transactional_summary:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/customer_transactional_summary.csv
+
+funds_summary:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/customer_funds_summary.csv
+
+prev_loans_summary:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/customer_prev_loans_summary.csv
+
+active_loans_summary:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/customer_active_loans_summary.csv
+
+loans_to_predict:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/customer_loans_to_predict.csv
+
+behavior_features:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/customer_behavior_features.csv
+
+
+
+#04_feature data
+
+
+
+
+
 
 reporting_tests_raw:
   type: pandas.CSVDataset
   filepath: data/08_reporting/data_tests_raw.csv
 
-ref_data:
-  type: pandas.CSVDataset
-  filepath: data/02_intermediate/ref_data.csv
-
-ana_data:
-  type: pandas.CSVDataset
-  filepath: data/02_intermediate/ana_data.csv
-
-
-reporting_data_train:
-  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
-  dataset:
-    type: json.JSONDataset
-    filepath: data/08_reporting/reporting_data_train.json
-
-reporting_tests:
-  type: pandas.CSVDataset
-  filepath: data/08_reporting/data_tests.csv
-
-preprocessed_training_data:
-  type: pandas.CSVDataset
-  filepath: data/03_primary/preprocessed_train_data.csv
-
-preprocessed_batch_data:
-  type: pandas.CSVDataset
-  filepath: data/03_primary/preprocessed_batch_data.csv
-
-encoder_transform:
-  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
-  dataset:
-    type: pickle.PickleDataset
-    filepath: data/04_feature/encoder.pkl
-
-X_train_data:
-  type: pandas.CSVDataset
-  filepath: data/05_model_input/X_train.csv
-
-y_train_data:
-  type: pandas.CSVDataset
-  filepath: data/05_model_input/y_train.csv
-
-
-X_test_data:
-  type: pandas.CSVDataset
-  filepath: data/05_model_input/X_test.csv
-
-y_test_data:
-  type: pandas.CSVDataset
-  filepath: data/05_model_input/y_test.csv 
-
-production_columns:
-  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
-  dataset:
-    type: pickle.PickleDataset
-    filepath: data/06_models/production_cols.pkl
-
-
-best_columns:
-  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
-  dataset:
-    type: pickle.PickleDataset
-    filepath: data/06_models/best_cols.pkl
-
-production_model:
-  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
-  dataset:
-    type: pickle.PickleDataset
-    filepath: data/06_models/production_model.pkl
-
-production_model_metrics:
-  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
-  dataset:
-    type: json.JSONDataset
-    filepath: data/08_reporting/production_model_metrics.json
-
-drift_result:
-  type: pandas.CSVDataset
-  filepath: data/08_reporting/drift_result.csv
-
-
-output_plot:
-  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
-  dataset:
-    type: matplotlib.MatplotlibWriter
-    filepath: data/08_reporting/shap_plot.png
