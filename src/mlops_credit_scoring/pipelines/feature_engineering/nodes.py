@@ -12,8 +12,8 @@ from sklearn.feature_selection import RFE
 import os
 import pickle
 
-def extract_transactions_features(transactions: pd.DataFrame) -> pd.DataFrame:
-    loans_reference_date = pd.to_datetime('2024-01-31')
+def extract_transactions_features(transactions: pd.DataFrame, run_date:str) -> pd.DataFrame:
+    loans_reference_date = pd.to_datetime(run_date, format="%Y%m%d")
     #loans_reference_date = pd.to_datetime(loans_reference_date)
     end_date = loans_reference_date - pd.DateOffset(months=1)
     start_date = end_date - pd.DateOffset(years=1) + pd.DateOffset(days=1)
@@ -39,16 +39,19 @@ def extract_transactions_features(transactions: pd.DataFrame) -> pd.DataFrame:
     summary = pd.merge(avg_income, avg_expenses, on="CustomerId", how="outer").fillna(0)
     return summary
 
-def extract_transactions_features_batch(transactions: pd.DataFrame, reference_dates: list[str]) -> dict:
+def extract_transactions_features_batch(transactions: pd.DataFrame, run_date:list[str]) -> dict:
     result = {}
-    for ref_date in reference_dates:
+    for ref_date in run_date:
         summary = extract_transactions_features(transactions, ref_date)
+        summary["run_date"]=ref_date
         suffix = ref_date.replace("-", "")
         result[f"customer_transactional_summary_{suffix}"] = summary
-    return result
 
-def extract_funds_features(funds: pd.DataFrame) -> pd.DataFrame:
-    loans_reference_date = pd.to_datetime('2024-01-31')
+    return  result
+
+def extract_funds_features(funds: pd.DataFrame, run_date:str) -> pd.DataFrame:
+    #loans_reference_date = pd.to_datetime('2024-01-31')
+    loans_reference_date = pd.to_datetime(run_date, format="%Y%m%d")
     end_date = loans_reference_date - pd.DateOffset(months=1)
     start_date = end_date - pd.DateOffset(years=1) + pd.DateOffset(days=1)
 
@@ -62,8 +65,16 @@ def extract_funds_features(funds: pd.DataFrame) -> pd.DataFrame:
 
     return summary
 
-def extract_previous_loans_features(loans_hist: pd.DataFrame) -> pd.DataFrame:
-    loans_reference_date = pd.to_datetime('2024-01-31')
+def extract_funds_features_batch(funds: pd.DataFrame, run_date: list[str]) -> dict:
+    result = {}
+    for ref_date in run_date:
+        summary = extract_funds_features(funds, ref_date)
+        summary["run_date"] = ref_date
+        result[f"customer_funds_summary_{ref_date}"] = summary
+    return result
+
+def extract_previous_loans_features(loans_hist: pd.DataFrame, run_date :str) -> pd.DataFrame:
+    loans_reference_date = pd.to_datetime(run_date, format="%Y%m%d")
     end_date = loans_reference_date - pd.DateOffset(months=1)
 
     loans_hist["SnapshotDate"] = pd.to_datetime(loans_hist["SnapshotDate"])
@@ -85,10 +96,17 @@ def extract_previous_loans_features(loans_hist: pd.DataFrame) -> pd.DataFrame:
     summary = pd.merge(prev_loans, prev_defaults, on="CustomerId", how="outer").fillna(0)
     return summary
 
-def extract_active_loans_features(loans_hist: pd.DataFrame) -> pd.DataFrame:
-    loans_reference_date = pd.to_datetime('2024-01-31')
-    end_date = loans_reference_date - pd.DateOffset(months=1)
+def extract_previous_loans_features_batch(loans_hist: pd.DataFrame, run_date: list[str]) -> dict:
+    result = {}
+    for ref_date in run_date:
+        summary = extract_previous_loans_features(loans_hist, ref_date)
+        summary["run_date"] = ref_date
+        result[f"customer_prev_loans_summary_{ref_date}"] = summary
+    return result
 
+def extract_active_loans_features(loans_hist: pd.DataFrame, run_date:str) -> pd.DataFrame:
+    loans_reference_date = pd.to_datetime(run_date, format="%Y%m%d")
+    end_date = loans_reference_date - pd.DateOffset(months=1)
     loans_hist["SnapshotDate"] = pd.to_datetime(loans_hist["SnapshotDate"])
     active = loans_hist[loans_hist["SnapshotDate"] == end_date].copy()
     active["CreditEOMStartDate"] = pd.to_datetime(active["CreditEOMStartDate"])
@@ -99,6 +117,14 @@ def extract_active_loans_features(loans_hist: pd.DataFrame) -> pd.DataFrame:
     ).reset_index().rename(columns={"CustomerNewId": "CustomerId"})
 
     return summary
+
+def extract_active_loans_features_batch(loans_hist: pd.DataFrame, run_date: list[str]) -> dict:
+    result = {}
+    for ref_date in run_date:
+        summary = extract_active_loans_features(loans_hist, ref_date)
+        summary["run_date"] = ref_date
+        result[f"customer_active_loans_summary_{ref_date}"] = summary
+    return result
 
 def extract_loans_features(loans: pd.DataFrame) -> pd.DataFrame:
     loans["CreditEOMStartDate"] = pd.to_datetime(loans["CreditEOMStartDate"])
@@ -114,6 +140,22 @@ def extract_loans_features(loans: pd.DataFrame) -> pd.DataFrame:
     filtered = filtered.rename(columns={"CustomerNewId": "CustomerId"})
     return filtered[["CustomerId", "CreditType", "CreditAmount", "Duration_Months", "NumberOfInstallmentsToPay", "PaymentFrequency", "HasDefault"]]
 
+def extract_loans_features_batch(loans_files: dict[str, object], run_date: list[str]) -> dict:
+    results = {}
+
+    for date in run_date:
+        key = f"Loans_{date}"  # No ".csv" suffix here
+        dataset = loans_files.get(key)
+        if dataset is None:
+            print(f"{key} → SKIPPED")
+            continue
+        loans_df = dataset() # Must call .load()
+        summary = extract_loans_features(loans_df)
+        summary["run_date"] = date
+        results[f"customer_loans_to_predict_{date}"] = summary
+
+    return results
+
 
 def merge_features_with_target_loans(
     loans_to_predict: pd.DataFrame,
@@ -122,12 +164,44 @@ def merge_features_with_target_loans(
     previous_loans_summary: pd.DataFrame,
     active_loans_summary: pd.DataFrame
 ) -> pd.DataFrame:
-
     df = loans_to_predict.copy()
 
-    df = df.merge(transactional_summary, on="CustomerId", how="left")
-    df = df.merge(funds_summary, on="CustomerId", how="left")
-    df = df.merge(previous_loans_summary, on="CustomerId", how="left")
-    df = df.merge(active_loans_summary, on="CustomerId", how="left")
+    df = df.merge(transactional_summary, on=["CustomerId", "run_date"], how="left")
+    df = df.merge(funds_summary, on=["CustomerId", "run_date"], how="left")
+    df = df.merge(previous_loans_summary, on=["CustomerId", "run_date"], how="left")
+    df = df.merge(active_loans_summary, on=["CustomerId", "run_date"], how="left")
 
     return df.fillna(0)
+
+def merge_features_with_target_loans_batch(
+    loans_to_predict: dict[str, pd.DataFrame],
+    transactional_summaries: dict[str, pd.DataFrame],
+    funds_summaries: dict[str, pd.DataFrame],
+    prev_loans_summaries: dict[str, pd.DataFrame],
+    active_loans_summaries: dict[str, pd.DataFrame],
+    run_date: list[str]
+) -> pd.DataFrame:
+    
+    results = []
+
+    for date in run_date:
+        loans_df = loans_to_predict.get(f"customer_loans_to_predict_{date}")()
+        tx_df = transactional_summaries.get(f"customer_transactional_summary_{date}")()
+        funds_df = funds_summaries.get(f"customer_funds_summary_{date}")()
+        prev_df = prev_loans_summaries.get(f"customer_prev_loans_summary_{date}")()
+        active_df = active_loans_summaries.get(f"customer_active_loans_summary_{date}")()
+
+        if loans_df is None:
+            continue
+        df_merged = merge_features_with_target_loans(
+            loans_df,
+            tx_df if tx_df is not None else pd.DataFrame(columns=["CustomerId"]),
+            funds_df if funds_df is not None else pd.DataFrame(columns=["CustomerId"]),
+            prev_df if prev_df is not None else pd.DataFrame(columns=["CustomerId"]),
+            active_df if active_df is not None else pd.DataFrame(columns=["CustomerId"])
+        )
+
+        df_merged["run_date"] = date
+        results.append(df_merged)
+
+    return pd.concat(results, ignore_index=True)

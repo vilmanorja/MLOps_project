@@ -10,9 +10,16 @@ customers_raw_data:
   type: pandas.CSVDataset
   filepath: data/01_raw/Customers.csv
 
+# loans_raw_data:
+#   type: pandas.CSVDataset
+#   filepath: data/01_raw/Loans_20240131.csv
 loans_raw_data:
-  type: pandas.CSVDataset
-  filepath: data/01_raw/Loans_20240131.csv
+  type: partitions.PartitionedDataset
+  path: data/01_raw/loans/
+  dataset:
+    type: pandas.CSVDataset
+  filename_suffix: ".csv"
+
 
 loans_hist_raw_data:
   type: pandas.CSVDataset
@@ -33,38 +40,66 @@ ingested_data:
   filepath: data/02_intermediate/ingested_data.csv
 
 
-#03_primary data
-transactional_summary:
-  type: pandas.CSVDataset
-  filepath: data/03_primary/customer_transactional_summary.csv
+# #03_primary data
+# transactional_summary:
+#   type: pandas.CSVDataset
+#   filepath: data/03_primary/customer_transactional_summary.csv
+#   save_args:
+#     lineterminator: "\n"
 
-# transactional_summaries:
-#   type: PartitionedDataSet
-#   path: data/03_primary/
-#   dataset:
-#     type: pandas.CSVDataset
-#   filename_suffix: .csv
-#   pattern: customer_transactional_summary_*
 
-funds_summary:
-  type: pandas.CSVDataset
-  filepath: data/03_primary/customer_funds_summary.csv
+transactional_summaries:
+  type: partitions.PartitionedDataset
+  path: data/03_primary/transactional_summaries/
+  dataset:
+    type: pandas.CSVDataset
+    save_args:
+      lineterminator: "\n"
+  filename_suffix: .csv
 
-prev_loans_summary:
-  type: pandas.CSVDataset
-  filepath: data/03_primary/customer_prev_loans_summary.csv
 
-active_loans_summary:
-  type: pandas.CSVDataset
-  filepath: data/03_primary/customer_active_loans_summary.csv
+funds_summaries:
+  type: partitions.PartitionedDataset
+  path: data/03_primary/funds_summaries/
+  dataset:
+    type: pandas.CSVDataset
+    save_args:
+      lineterminator: "\n"
+  filename_suffix: ".csv"
+
+prev_loans_summaries:
+  type: partitions.PartitionedDataset
+  path: data/03_primary/prev_loans_summaries/
+  dataset:
+    type: pandas.CSVDataset
+    save_args:
+      lineterminator: "\n"
+  filename_suffix: ".csv"
+
+active_loans_summaries:
+  type: partitions.PartitionedDataset
+  path: data/03_primary/active_loans_summaries/
+  dataset:
+    type: pandas.CSVDataset
+    save_args:
+      lineterminator: "\n"
+  filename_suffix: ".csv"
+
 
 loans_to_predict:
-  type: pandas.CSVDataset
-  filepath: data/03_primary/customer_loans_to_predict.csv
+  type: partitions.PartitionedDataset
+  path: data/03_primary/loans_to_predict/
+  dataset:
+    type: pandas.CSVDataset
+    save_args:
+      lineterminator: "\n"
+  filename_suffix: ".csv"
 
 behavior_features:
   type: pandas.CSVDataset
   filepath: data/03_primary/customer_behavior_features.csv
+  save_args:
+    lineterminator: "\n"
 
 
 

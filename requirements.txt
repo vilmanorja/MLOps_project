@@ -8,6 +8,7 @@ ipykernel>=6.29.5
 kaleido==0.2.0
 kedro>=0.19.12
 kedro-mlflow>=0.14.4
+kedro-datasets[pandas]>=1.4.0
 kedro-viz>=11.0.1
 mlflow>=2.21.0
 nannyml>=0.13.0
