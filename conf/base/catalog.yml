@@ -3,6 +3,8 @@
 # Documentation for this file format can be found in "The Data Catalog"
 # Link: https://docs.kedro.org/en/stable/data/data_catalog.html
 
+
+
 # Raw data
 customers_raw_data:
   type: pandas.CSVDataset
@@ -35,6 +37,14 @@ ingested_data:
 transactional_summary:
   type: pandas.CSVDataset
   filepath: data/03_primary/customer_transactional_summary.csv
+
+# transactional_summaries:
+#   type: PartitionedDataSet
+#   path: data/03_primary/
+#   dataset:
+#     type: pandas.CSVDataset
+#   filename_suffix: .csv
+#   pattern: customer_transactional_summary_*
 
 funds_summary:
   type: pandas.CSVDataset

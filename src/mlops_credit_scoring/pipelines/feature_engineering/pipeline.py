@@ -12,7 +12,8 @@ from .nodes import (  # assuming your functions are in nodes.py
     extract_previous_loans_features,
     extract_active_loans_features,
     extract_loans_features,
-    merge_features_with_target_loans
+    merge_features_with_target_loans,
+    extract_transactions_features_batch
 )
 
 def create_pipeline(**kwargs) -> Pipeline:
@@ -47,6 +48,12 @@ def create_pipeline(**kwargs) -> Pipeline:
             outputs="loans_to_predict",
             name="loans_features_node",
         ),
+        # node(
+        #     func=extract_transactions_features_batch,
+        #     inputs=["transactions_raw_data", "params:reference_dates"],
+        #     outputs="transactional_summaries",
+        #     name="transaction_features_batch_node"
+        # ),
         node(
             func=merge_features_with_target_loans,
             inputs=[

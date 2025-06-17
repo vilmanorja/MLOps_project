@@ -14,6 +14,7 @@ import pickle
 
 def extract_transactions_features(transactions: pd.DataFrame) -> pd.DataFrame:
     loans_reference_date = pd.to_datetime('2024-01-31')
+    #loans_reference_date = pd.to_datetime(loans_reference_date)
     end_date = loans_reference_date - pd.DateOffset(months=1)
     start_date = end_date - pd.DateOffset(years=1) + pd.DateOffset(days=1)
 
@@ -37,6 +38,14 @@ def extract_transactions_features(transactions: pd.DataFrame) -> pd.DataFrame:
 
     summary = pd.merge(avg_income, avg_expenses, on="CustomerId", how="outer").fillna(0)
     return summary
+
+def extract_transactions_features_batch(transactions: pd.DataFrame, reference_dates: list[str]) -> dict:
+    result = {}
+    for ref_date in reference_dates:
+        summary = extract_transactions_features(transactions, ref_date)
+        suffix = ref_date.replace("-", "")
+        result[f"customer_transactional_summary_{suffix}"] = summary
+    return result
 
 def extract_funds_features(funds: pd.DataFrame) -> pd.DataFrame:
     loans_reference_date = pd.to_datetime('2024-01-31')
