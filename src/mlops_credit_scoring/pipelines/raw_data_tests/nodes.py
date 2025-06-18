@@ -41,31 +41,34 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
     expectation_suite_bank = ExpectationSuite(
         expectation_suite_name=expectation_suite_name
     )
+    
 
-    # Customers features
+    # customer features
     if feature_group == 'customers_features':
 
-        for i in ['no_of_dependents', 'segment_id', 'industry_id', 'legal_doc_name1_id', 'yr_net_monthly_in']:
+        for i in ['NoOfDependents', 'SegmentId', 'IndustryId', 'LegalDocName1Id', 'YrNetMonthlyIn']:
             expectation_suite_bank.add_expectation(
                 ExpectationConfiguration(
                     expectation_type="expect_column_values_to_be_of_type",
                     kwargs={"column": i, "type_": "float64"},
                 )
             )
+
         # NewId
         expectation_suite_bank.add_expectation(
             ExpectationConfiguration(
                 expectation_type="expect_column_values_to_not_be_null",
-                kwargs={"column": "new_id"}
+                kwargs={"column": "NewId"}
             )
         )
         expectation_suite_bank.add_expectation(
             ExpectationConfiguration(
                 expectation_type="expect_column_values_to_be_of_type",
-                kwargs={"column": "new_id", "type_": "int64"}
+                kwargs={"column": "NewId", "type_": "int64"}
             )
         )
-        for i in ['segment_id', 'industry_id', 'legal_doc_name1_id', 'new_id']:
+
+        for i in ['SegmentId', 'IndustryId', 'LegalDocName1Id', 'NewId']:
             expectation_suite_bank.add_expectation(
                 ExpectationConfiguration(
                     expectation_type="expect_column_values_to_be_between",
@@ -73,11 +76,12 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
                         "column": i,
                         "min_value": 1,
                         "strict_min": False,
-                        "max_value": None  # No upper bound
+                        "max_value": None
                     }
                 )
             )
-        for i in ['yr_net_monthly_in', 'no_of_dependents']:
+
+        for i in ['YrNetMonthlyIn', 'NoOfDependents']:
             expectation_suite_bank.add_expectation(
                 ExpectationConfiguration(
                     expectation_type="expect_column_values_to_be_between",
@@ -85,11 +89,12 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
                         "column": i,
                         "min_value": 0,
                         "strict_min": False,
-                        "max_value": None  # No upper bound
+                        "max_value": None
                     }
                 )
             )
-        for i in ['yr_net_monthly_in', 'no_of_dependents', 'segment_id', 'industry_id', 'legal_doc_name1_id', 'new_id']:
+
+        for i in ['YrNetMonthlyIn', 'NoOfDependents', 'SegmentId', 'IndustryId', 'LegalDocName1Id', 'NewId']:
             expectation_suite_bank.add_expectation(
                 ExpectationConfiguration(
                     expectation_type="expect_column_to_exist",
@@ -97,10 +102,10 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
                 )
             )
 
-        for i in ['customer_status','employment_status','gender','marital_status', 'placebrth', 'cust_type', 
-                  'nationality', 'ocupation_desc', 'residence_code','residence_status','residence_type',
-                  'seg_group','title', 'town_country', 'cust_type1', 'habliter', 'province', 'district', 
-                  'legal_doc_name1_id_description', 'legal_iss_date', 'legal_iss_auth', 'a_m_l_risk_rating']:
+        for i in ['CustomerStatus', 'EmploymentStatus', 'Gender', 'MaritalStatus', 'Placebrth', 'CustType', 
+                'Nationality', 'OcupationDesc', 'ResidenceCode', 'ResidenceStatus', 'ResidenceType',
+                'SegGroup', 'Title', 'TownCountry', 'CustType.1', 'Habliter', 'Province', 'District', 
+                'LegalDocName1IdDescription', 'LegalIssDate', 'LegalIssAuth', 'AMLRiskRating']:
             expectation_suite_bank.add_expectation(
                 ExpectationConfiguration(
                     expectation_type="expect_column_to_exist",
@@ -110,7 +115,7 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
 
     if feature_group == 'loans_features':
 
-        for i in ['customer_new_id', 'contract_id', 'has_default']:
+        for i in ['CustomerNewId', 'ContractId', 'HasDefault']:
             expectation_suite_bank.add_expectation(
                 ExpectationConfiguration(
                     expectation_type="expect_column_values_to_be_of_type",
@@ -118,7 +123,7 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
                 )
             )
         
-        for i in ['credit_amount', 'outstanding','number_of_installments_to_pay', 'arreas']:
+        for i in ['CreditAmount', 'Outstanding', 'NumberOfInstallmentsToPay', 'Arreas']:
             expectation_suite_bank.add_expectation(
                 ExpectationConfiguration(
                     expectation_type="expect_column_values_to_be_of_type",
@@ -126,7 +131,7 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
                 )
             )
 
-        for i in ['date', 'segment_desc', 'credit_type', 'credit_e_o_m_start_date', 'credit_e_o_m_end_date', 'payment_frequency']:
+        for i in ['SegmentDesc', 'CreditType', 'CreditEOMStartDate', 'CreditEOMEndDate', 'PaymentFrequency']:
             expectation_suite_bank.add_expectation(
                 ExpectationConfiguration(
                     expectation_type="expect_column_values_to_be_of_type",
@@ -139,25 +144,72 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
         expectation_suite_bank.add_expectation(
             ExpectationConfiguration(
                 expectation_type="expect_column_values_to_be_of_type",
-                kwargs={"column": 'customer_id', "type_": "int64"},
+                kwargs={"column": 'CustomerId', "type_": "int64"},
             )
         )
         
         expectation_suite_bank.add_expectation(
             ExpectationConfiguration(
                 expectation_type="expect_column_values_to_be_of_type",
-                kwargs={"column": 'funds_balance', "type_": "float64"},
+                kwargs={"column": 'FundsBalance', "type_": "float64"},
             )
         )
 
         expectation_suite_bank.add_expectation(
             ExpectationConfiguration(
                 expectation_type="expect_column_values_to_be_of_type",
-                kwargs={"column": 'date', "type_": "object"},
+                kwargs={"column": 'Date', "type_": "object"},
             )
         )
-    return expectation_suite_bank
 
+    if feature_group == 'transactions_features':
+        expectation_suite_bank.add_expectation(
+            ExpectationConfiguration(
+                expectation_type="expect_column_values_to_be_of_type",
+                kwargs={"column": 'TransactionId', "type_": "int64"},
+            )
+        )
+
+        for i in ['CustomerIdDebitNew', 'CustomerIdCreditNew', 'Amount', 'AmountMZN']:
+            expectation_suite_bank.add_expectation(
+                ExpectationConfiguration(
+                    expectation_type="expect_column_values_to_be_of_type",
+                    kwargs={"column": i, "type_": "float64"},
+                )
+            )
+
+        for i in ['Date', 'TransactionType', 'TransactionCategory', 'Currency']:
+            expectation_suite_bank.add_expectation(
+                ExpectationConfiguration(
+                    expectation_type="expect_column_values_to_be_of_type",
+                    kwargs={"column": i, "type_": "object"},
+                )
+            )
+
+    if feature_group == 'loans_hist_features':
+        for i in ['CustomerNewId', 'ContractId', 'HasDefault']:
+            expectation_suite_bank.add_expectation(
+                ExpectationConfiguration(
+                    expectation_type="expect_column_values_to_be_of_type",
+                    kwargs={"column": i, "type_": "int64"},
+                )
+            )
+        for i in ['CreditAmount', 'Outstanding', 'Arreas']:
+            expectation_suite_bank.add_expectation(
+                ExpectationConfiguration(
+                    expectation_type="expect_column_values_to_be_of_type",
+                    kwargs={"column": i, "type_": "float64"},
+                )
+            )
+        for i in ['SnapshotDate', 'SegmentDesc', 'CreditType', 'CreditEOMStartDate', 'CreditEOMEndDate', 'NumberOfInstallmentsToPay', 'PaymentFrequency']:
+            expectation_suite_bank.add_expectation(
+                ExpectationConfiguration(
+                    expectation_type="expect_column_values_to_be_of_type",
+                    kwargs={"column": i, "type_": "object"},
+                )
+            )
+
+    return expectation_suite_bank
 
 def get_validation_results(checkpoint_result):
     # validation_result is a dictionary containing one key-value pair
@@ -204,7 +256,7 @@ def get_validation_results(checkpoint_result):
     return df_validation
 
 
-def test_data(df, loans, funds):
+def test_data(df, funds, transactions, loans_files, loans_hist, run_date):
     # context = gx.get_context(context_root_dir = "//..//..//gx")
     full_path = os.getcwd()
     context = gx.get_context(context_root_dir = full_path.partition('src')[0] + '/gx')
@@ -219,35 +271,34 @@ def test_data(df, loans, funds):
 
     
     validation_expectation_suite_customer = build_expectation_suite("customer_expectations_raw", "customers_features")
-    validation_expectation_suite_loan = build_expectation_suite("loan_expectations_raw", "loans_features")
-    validation_expectation_suite_fund = build_expectation_suite("fund_expectations_raw", "funds_features")
+    validation_expectation_suite_funds = build_expectation_suite("funds_expectations_raw", "funds_features")
+    validation_expectation_suite_transactions = build_expectation_suite("transactions_expectations_raw", "transactions_features")
+    validation_expectation_suite_loans = build_expectation_suite("loans_expectations_raw", "loans_features")
+    validation_expectation_suite_loans_hist = build_expectation_suite("loans_hist_expectations_raw", "loans_hist_features")
 
     context.add_or_update_expectation_suite(expectation_suite=validation_expectation_suite_customer)
-    context.add_or_update_expectation_suite(expectation_suite=validation_expectation_suite_loan)
-    context.add_or_update_expectation_suite(expectation_suite=validation_expectation_suite_fund)
+    context.add_or_update_expectation_suite(expectation_suite=validation_expectation_suite_funds)
+    context.add_or_update_expectation_suite(expectation_suite=validation_expectation_suite_transactions)
+    context.add_or_update_expectation_suite(expectation_suite=validation_expectation_suite_loans)
+    context.add_or_update_expectation_suite(expectation_suite=validation_expectation_suite_loans_hist)
 
     # add data
-    logger.info(f"The dataset contains {len(df.columns) + len(loans.columns) + len(funds.columns)} columns.")
+    for date in run_date:
+        key = f"Loans_{date}"  # No ".csv" suffix here
+        dataset = loans_files.get(key)
+        if dataset is None:
+            print(f"{key} → SKIPPED")
+            continue
+        loans = dataset()
 
-    df.columns = [re.sub(r'(?<!^)(?=[A-Z])', '_', col).lower() for col in df.columns]
-    df.columns = df.columns.str.replace('.', '', regex=False)
-    logger.info(f"{df.columns}")
-
-    loans.columns = [re.sub(r'(?<!^)(?=[A-Z])', '_', col).lower() for col in loans.columns]
-    loans.columns = loans.columns.str.replace('.', '', regex=False)
-    logger.info(f"{loans.columns}")
-
-    funds.columns = [re.sub(r'(?<!^)(?=[A-Z])', '_', col).lower() for col in funds.columns]
-    funds.columns = funds.columns.str.replace('.', '', regex=False)
-    logger.info(f"{funds.columns}")
-
-    customer_features = df.columns.tolist()
-    loans_features = loans.columns.tolist()
-    funds_features = funds.columns.tolist()
-    
+    logger.info(f"The dataset contains {len(df.columns)} columns.")
+    logger.info(f"The dataset contains {len(loans.columns)} columns.")
+    logger.info(f"The dataset contains {len(funds.columns)} columns.")
     df = df.reset_index()
-    loans = loans.reset_index()
     funds = funds.reset_index()
+    transactions = transactions.reset_index()
+    loans = loans.reset_index()
+    loans_hist = loans_hist.reset_index()
 
     data_asset_name = "customers_raw"
     try:
@@ -285,7 +336,7 @@ def test_data(df, loans, funds):
         validations=[
             {
                 "batch_request": batch_request,
-                "expectation_suite_name": "loan_expectations_raw",
+                "expectation_suite_name": "loans_expectations_raw",
             },
         ],
     )
@@ -305,30 +356,72 @@ def test_data(df, loans, funds):
         validations=[
             {
                 "batch_request": batch_request,
-                "expectation_suite_name": "fund_expectations_raw",
+                "expectation_suite_name": "funds_expectations_raw",
             },
         ],
     )
+
+    data_asset_name = "transactions_raw"
+    try:
+        data_asset = datasource.add_dataframe_asset(name=data_asset_name, dataframe=transactions)
+    except:
+        print("The data asset alread exists. The required one will be loaded.")
+        data_asset = datasource.get_asset(data_asset_name)
+    batch_request = data_asset.build_batch_request(dataframe=transactions)
+
+    checkpoint_transactions = gx.checkpoint.SimpleCheckpoint(
+            name="checkpoint_transactions_raw",
+            data_context=context,
+            validations=[
+                {
+                    "batch_request": batch_request,
+                    "expectation_suite_name": "transactions_expectations_raw",
+                },
+            ],
+    )
+    data_asset_name = "loans_hist_raw"
+    try:
+        data_asset = datasource.add_dataframe_asset(name=data_asset_name, dataframe=loans_hist)
+    except:
+        print("The data asset alread exists. The required one will be loaded.")
+        data_asset = datasource.get_asset(data_asset_name)
+    batch_request = data_asset.build_batch_request(dataframe=loans_hist)
+
+    checkpoint_loans_hist = gx.checkpoint.SimpleCheckpoint(
+            name="checkpoint_loans_hist_raw",
+            data_context=context,
+            validations=[
+                {
+                    "batch_request": batch_request,
+                    "expectation_suite_name": "loans_hist_expectations_raw",
+                },
+            ],
+    )
+
     checkpoint_result1 = checkpoint_customers.run()
     checkpoint_result2 = checkpoint_loans.run()
     checkpoint_result3 = checkpoint_funds.run()
+    checkpoint_result4 = checkpoint_transactions.run()
+    checkpoint_result5 = checkpoint_loans_hist.run()
 
     df_validation1 = get_validation_results(checkpoint_result1)
     df_validation2 = get_validation_results(checkpoint_result2)
     df_validation3 = get_validation_results(checkpoint_result3)
-    df_validation = pd.concat([df_validation1, df_validation2, df_validation3], ignore_index=True)
+    df_validation4 = get_validation_results(checkpoint_result4)
+    df_validation5 = get_validation_results(checkpoint_result5)
+    df_validation = pd.concat([df_validation1, df_validation2, df_validation3, df_validation4, df_validation5], ignore_index=True)
     #base on these results you can make an assert to stop your pipeline
 
     # pd_df_ge = gx.from_pandas(df)
 
     # assert pd_df_ge.expect_column_values_to_be_of_type("duration", "int64").success == True
     # assert pd_df_ge.expect_column_values_to_be_of_type("marital", "str").success == True
-    #assert pd_df_ge.expect_table_column_count_to_equal(23).success == False
+    # assert pd_df_ge.expect_table_column_count_to_equal(23).success == False
     
     logger.info("Data passed on the unit data tests")
     logger.info(f'All raw data tests passed: {df_validation[df_validation.Success == False].empty}')
 
-    return df_validation
+    return df_validation, df, funds, transactions, loans, loans_hist 
 
 
 

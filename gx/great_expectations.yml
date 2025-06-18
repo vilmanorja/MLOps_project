@@ -124,6 +124,12 @@ fluent_datasources:
       loans_raw:
         type: dataframe
         batch_metadata: {}
+      loans_hist_raw:
+        type: dataframe
+        batch_metadata: {}
+      transactions_raw:
+        type: dataframe
+        batch_metadata: {}
       funds_raw:
         type: dataframe
         batch_metadata: {}

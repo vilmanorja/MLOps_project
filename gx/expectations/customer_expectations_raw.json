@@ -5,7 +5,7 @@
     {
       "expectation_type": "expect_column_values_to_be_of_type",
       "kwargs": {
-        "column": "no_of_dependents",
+        "column": "NoOfDependents",
         "type_": "float64"
       },
       "meta": {}
@@ -13,7 +13,7 @@
     {
       "expectation_type": "expect_column_values_to_be_of_type",
       "kwargs": {
-        "column": "segment_id",
+        "column": "SegmentId",
         "type_": "float64"
       },
       "meta": {}
@@ -21,7 +21,7 @@
     {
       "expectation_type": "expect_column_values_to_be_of_type",
       "kwargs": {
-        "column": "industry_id",
+        "column": "IndustryId",
         "type_": "float64"
       },
       "meta": {}
@@ -29,7 +29,7 @@
     {
       "expectation_type": "expect_column_values_to_be_of_type",
       "kwargs": {
-        "column": "legal_doc_name1_id",
+        "column": "LegalDocName1Id",
         "type_": "float64"
       },
       "meta": {}
@@ -37,7 +37,7 @@
     {
       "expectation_type": "expect_column_values_to_be_of_type",
       "kwargs": {
-        "column": "yr_net_monthly_in",
+        "column": "YrNetMonthlyIn",
         "type_": "float64"
       },
       "meta": {}
@@ -45,14 +45,14 @@
     {
       "expectation_type": "expect_column_values_to_not_be_null",
       "kwargs": {
-        "column": "new_id"
+        "column": "NewId"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_of_type",
       "kwargs": {
-        "column": "new_id",
+        "column": "NewId",
         "type_": "int64"
       },
       "meta": {}
@@ -60,7 +60,7 @@
     {
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
-        "column": "segment_id",
+        "column": "SegmentId",
         "max_value": null,
         "min_value": 1,
         "strict_min": false
@@ -70,7 +70,7 @@
     {
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
-        "column": "industry_id",
+        "column": "IndustryId",
         "max_value": null,
         "min_value": 1,
         "strict_min": false
@@ -80,7 +80,7 @@
     {
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
-        "column": "legal_doc_name1_id",
+        "column": "LegalDocName1Id",
         "max_value": null,
         "min_value": 1,
         "strict_min": false
@@ -90,7 +90,7 @@
     {
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
-        "column": "new_id",
+        "column": "NewId",
         "max_value": null,
         "min_value": 1,
         "strict_min": false
@@ -100,7 +100,7 @@
     {
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
-        "column": "yr_net_monthly_in",
+        "column": "YrNetMonthlyIn",
         "max_value": null,
         "min_value": 0,
         "strict_min": false
@@ -110,7 +110,7 @@
     {
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
-        "column": "no_of_dependents",
+        "column": "NoOfDependents",
         "max_value": null,
         "min_value": 0,
         "strict_min": false
@@ -120,196 +120,196 @@
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "yr_net_monthly_in"
+        "column": "YrNetMonthlyIn"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "no_of_dependents"
+        "column": "NoOfDependents"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "segment_id"
+        "column": "SegmentId"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "industry_id"
+        "column": "IndustryId"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "legal_doc_name1_id"
+        "column": "LegalDocName1Id"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "new_id"
+        "column": "NewId"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "customer_status"
+        "column": "CustomerStatus"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "employment_status"
+        "column": "EmploymentStatus"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "gender"
+        "column": "Gender"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "marital_status"
+        "column": "MaritalStatus"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "placebrth"
+        "column": "Placebrth"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "cust_type"
+        "column": "CustType"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "nationality"
+        "column": "Nationality"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "ocupation_desc"
+        "column": "OcupationDesc"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "residence_code"
+        "column": "ResidenceCode"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "residence_status"
+        "column": "ResidenceStatus"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "residence_type"
+        "column": "ResidenceType"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "seg_group"
+        "column": "SegGroup"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "title"
+        "column": "Title"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "town_country"
+        "column": "TownCountry"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "cust_type1"
+        "column": "CustType.1"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "habliter"
+        "column": "Habliter"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "province"
+        "column": "Province"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "district"
+        "column": "District"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "legal_doc_name1_id_description"
+        "column": "LegalDocName1IdDescription"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "legal_iss_date"
+        "column": "LegalIssDate"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "legal_iss_auth"
+        "column": "LegalIssAuth"
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "a_m_l_risk_rating"
+        "column": "AMLRiskRating"
       },
       "meta": {}
     }
