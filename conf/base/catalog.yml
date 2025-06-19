@@ -41,7 +41,7 @@ customers_ingested:
 
 loans_ingested:
   type: partitions.PartitionedDataset
-  path: data/02_intermediate/loans_ingested.csv
+  path: data/02_intermediate/loans_ingested
   dataset:
     type: pandas.CSVDataset
   filename_suffix: ".csv"

@@ -38,8 +38,6 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
     expectation_suite_bank = ExpectationSuite(
         expectation_suite_name=expectation_suite_name
     )
-
-    
     
     #context = gx.get_context()
     #expectation_suite_bank = context.add_expectation_suite("my_suite")
@@ -47,28 +45,23 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
 
     # numerical features
     if feature_group == 'numerical_features':
-        for i in ['no_of_dependents', 'segment_id', 'industry_id', 'legal_doc_name1_id', 'new_id']:
+        # int
+        integer_features = ['no_of_dependents', 'segment_id', 'industry_id',
+       'legal_doc_name1_id', 'customer_id', 'duration_months',
+       'number_of_installments_to_pay', 'has_default', 'run_date',
+       'previous_loan_count', 'previous_loan_defaults', 'active_loans_count']
+        float_features = ['yr_net_monthly_in', 'credit_amount', 'avg_monthly_income',
+       'income_stability', 'avg_monthly_expenses', 'expenses_stability',
+       'avg_monthly_funds', 'funds_stability', 'previous_loans_avg_amount',
+       'previous_loans_std', 'active_loan_amount_total']
+        for i in integer_features:
                 expectation_suite_bank.add_expectation(
                     ExpectationConfiguration(
                         expectation_type="expect_column_values_to_be_of_type",
                         kwargs={"column": i, "type_": "int64"},
                     )
                 )
-        # NewId
-        expectation_suite_bank.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_values_to_not_be_null",
-                kwargs={"column": "new_id"}
-            )
-        )
-        # YrNetMonthlyIn
-        expectation_suite_bank.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_values_to_be_of_type",
-                kwargs={"column": "yr_net_monthly_in", "type_": "float64"}
-            )
-        )
-        for i in ['yr_net_monthly_in', 'no_of_dependents', 'segment_id', 'industry_id', 'legal_doc_name1_id', 'new_id']:
+        for i in integer_features:
             expectation_suite_bank.add_expectation(
                 ExpectationConfiguration(
                     expectation_type="expect_column_values_to_be_between",
@@ -80,6 +73,34 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
                     }
                 )
             )
+        # Id
+        expectation_suite_bank.add_expectation(
+            ExpectationConfiguration(
+                expectation_type="expect_column_values_to_not_be_null",
+                kwargs={"column": "customer_id"}
+            )
+        )
+        # float
+        for i in float_features:
+            expectation_suite_bank.add_expectation(
+                ExpectationConfiguration(
+                    expectation_type="expect_column_values_to_be_of_type",
+                    kwargs={"column": i, "type_": "float64"}
+                )
+            )
+        for i in float_features:
+            expectation_suite_bank.add_expectation(
+                ExpectationConfiguration(
+                    expectation_type="expect_column_values_to_be_between",
+                    kwargs={
+                        "column": i,
+                        "min_value": 0,
+                        "strict_min": False,
+                        "max_value": None  # No upper bound
+                    }
+                )
+            )
+        
     # datetime features
     if feature_group == 'datetime_features':
         for i in ['customer_since', 'date_of_birth', 'birth_in_corp_date', 'legal_iss_date']:
@@ -216,7 +237,19 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
                     kwargs={"column": i, "type_": "object"},
                 )
             )
-        
+        expectation_suite_bank.add_expectation(
+            ExpectationConfiguration(
+                expectation_type="expect_column_distinct_values_to_be_in_set",
+                kwargs={"column": "payment_frequency", "value_set": ['Monthly', 'Single', 'Quarterly']},
+            )
+        ) 
+
+        expectation_suite_bank.add_expectation(
+                    ExpectationConfiguration(
+                        expectation_type="expect_column_distinct_values_to_be_in_set",
+                        kwargs={"column": "credit_type", "value_set": ['Personal Credit', 'Credit Card', 'Secured Current Account', 'Leasing', 'Public Sector Employee Loan', 'Arranged Overdraft', 'Business Loan Account']},
+                    )
+                ) 
     return expectation_suite_bank
 
 
