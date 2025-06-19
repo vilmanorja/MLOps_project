@@ -1,3 +1,7 @@
+"""
+Tests to raw data files and data ingestion
+"""
+
 import logging
 from typing import Any, Dict, Tuple
 
@@ -281,10 +285,11 @@ def get_validation_results(checkpoint_result):
 
 
 def test_data(df, funds, transactions, loans_files, loans_hist, run_date):
-    # context = gx.get_context(context_root_dir = "//..//..//gx")
+    # get context
     full_path = os.getcwd()
     context = gx.get_context(context_root_dir = full_path.partition('src')[0] + '/gx')
 
+    # add datasource
     datasource_name = "project_data_raw"
     try:
         datasource = context.sources.add_pandas(datasource_name)
@@ -293,7 +298,7 @@ def test_data(df, funds, transactions, loans_files, loans_hist, run_date):
         logger.info("Data Source already exists.")
         datasource = context.datasources[datasource_name]
 
-    
+    # build expectations
     validation_expectation_suite_customer = build_expectation_suite("customer_expectations_raw", "customers_features")
     validation_expectation_suite_funds = build_expectation_suite("funds_expectations_raw", "funds_features")
     validation_expectation_suite_transactions = build_expectation_suite("transactions_expectations_raw", "transactions_features")
@@ -306,7 +311,7 @@ def test_data(df, funds, transactions, loans_files, loans_hist, run_date):
     context.add_or_update_expectation_suite(expectation_suite=validation_expectation_suite_loans)
     context.add_or_update_expectation_suite(expectation_suite=validation_expectation_suite_loans_hist)
 
-    # add data
+    # process loans files
     for date in run_date:
         key = f"Loans_{date}"  # No ".csv" suffix here
         dataset = loans_files.get(key)
@@ -318,12 +323,15 @@ def test_data(df, funds, transactions, loans_files, loans_hist, run_date):
     # logger.info(f"The dataset contains {len(df.columns)} columns.")
     # logger.info(f"The dataset contains {len(loans.columns)} columns.")
     # logger.info(f"The dataset contains {len(funds.columns)} columns.")
+
+    # reset index
     df = df.reset_index()
     funds = funds.reset_index()
     transactions = transactions.reset_index()
     loans = loans.reset_index()
     loans_hist = loans_hist.reset_index()
 
+    # Customers
     data_asset_name = "customers_raw"
     try:
         data_asset = datasource.add_dataframe_asset(name=data_asset_name, dataframe=df)
@@ -331,7 +339,6 @@ def test_data(df, funds, transactions, loans_files, loans_hist, run_date):
         logger.info("The data asset already exists. The required one will be loaded.")
         data_asset = datasource.get_asset(data_asset_name)
 
-    # Customers
     batch_request = data_asset.build_batch_request(dataframe=df)
 
     checkpoint_customers = gx.checkpoint.SimpleCheckpoint(
@@ -345,6 +352,7 @@ def test_data(df, funds, transactions, loans_files, loans_hist, run_date):
         ],
     )
 
+    # Loans
     data_asset_name = "loans_raw"
     try:
         data_asset = datasource.add_dataframe_asset(name=data_asset_name, dataframe=loans)
@@ -352,7 +360,6 @@ def test_data(df, funds, transactions, loans_files, loans_hist, run_date):
         logger.info("The data asset already exists. The required one will be loaded.")
         data_asset = datasource.get_asset(data_asset_name)
 
-    # Loans
     batch_request = data_asset.build_batch_request(dataframe=loans)
     checkpoint_loans = gx.checkpoint.SimpleCheckpoint(
         name="checkpoint_loans_raw",
@@ -364,7 +371,8 @@ def test_data(df, funds, transactions, loans_files, loans_hist, run_date):
             },
         ],
     )
-        
+
+    # Funds        
     data_asset_name = "funds_raw"
     try:
         data_asset = datasource.add_dataframe_asset(name=data_asset_name, dataframe=funds)
@@ -372,7 +380,7 @@ def test_data(df, funds, transactions, loans_files, loans_hist, run_date):
         logger.info("The data asset already exists. The required one will be loaded.")
         data_asset = datasource.get_asset(data_asset_name)
 
-    # Funds
+
     batch_request = data_asset.build_batch_request(dataframe=funds)
     checkpoint_funds = gx.checkpoint.SimpleCheckpoint(
         name="checkpoint_funds_raw",
@@ -385,6 +393,7 @@ def test_data(df, funds, transactions, loans_files, loans_hist, run_date):
         ],
     )
 
+    # transactions
     data_asset_name = "transactions_raw"
     try:
         data_asset = datasource.add_dataframe_asset(name=data_asset_name, dataframe=transactions)
@@ -403,6 +412,8 @@ def test_data(df, funds, transactions, loans_files, loans_hist, run_date):
                 },
             ],
     )
+
+    # loans hist
     data_asset_name = "loans_hist_raw"
     try:
         data_asset = datasource.add_dataframe_asset(name=data_asset_name, dataframe=loans_hist)
@@ -434,13 +445,6 @@ def test_data(df, funds, transactions, loans_files, loans_hist, run_date):
     df_validation4 = get_validation_results(checkpoint_result4)
     df_validation5 = get_validation_results(checkpoint_result5)
     df_validation = pd.concat([df_validation1, df_validation2, df_validation3, df_validation4, df_validation5], ignore_index=True)
-    #base on these results you can make an assert to stop your pipeline
-
-    # pd_df_ge = gx.from_pandas(df)
-
-    # assert pd_df_ge.expect_column_values_to_be_of_type("duration", "int64").success == True
-    # assert pd_df_ge.expect_column_values_to_be_of_type("marital", "str").success == True
-    # assert pd_df_ge.expect_table_column_count_to_equal(23).success == False
     
     logger.info("Data passed on the unit data tests")
     logger.info(f'All raw data tests passed: {df_validation[df_validation.Success == False].empty}')
