@@ -19,37 +19,37 @@ def create_pipeline(**kwargs) -> Pipeline:
     return pipeline([
         # node(
         #     func=extract_transactions_features,
-        #     inputs=["transactions_raw_data","params:run_date"],
+        #     inputs=["transactions_validated","params:run_date"],
         #     outputs="transactional_summary_{}",
         #     name="transaction_features_node",
         # ),
         node(
             func=extract_funds_features_batch,
-            inputs=["funds_raw_data","params:run_date"],
+            inputs=["funds_validated","params:run_date"],
             outputs="funds_summaries",
             name="funds_features_node",
         ),
         node(
             func=extract_previous_loans_features_batch,
-            inputs=["loans_hist_raw_data", "params:run_date"],
+            inputs=["loans_hist_validated", "params:run_date"],
             outputs="prev_loans_summaries",
             name="previous_loans_features_node",
         ),
         node(
             func=extract_active_loans_features_batch,
-            inputs=["loans_hist_raw_data", "params:run_date"],
+            inputs=["loans_hist_validated", "params:run_date"],
             outputs="active_loans_summaries",
             name="active_loans_features_node",
         ),
         node(
             func=extract_loans_features_batch,
-            inputs=["loans_raw_data", "params:run_date"],
+            inputs=["loans_validated", "params:run_date"],
             outputs="loans_to_predict",
             name="loans_features_batch_node"
         )
         ,node(
             func=extract_transactions_features_batch,
-            inputs=["transactions_raw_data", "params:run_date"],
+            inputs=["transactions_validated", "params:run_date"],
             outputs="transactional_summaries",
             name="transaction_features_batch_node"
         )

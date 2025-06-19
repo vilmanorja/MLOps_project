@@ -35,28 +35,39 @@ transactions_raw_data:
 
 
 #Ingested ---we should create for each of the datsets, as we did for customers
-customers_ingested:
+customers_validated:
   type: pandas.CSVDataset
-  filepath: data/02_intermediate/customers_ingested.csv
+  filepath: data/02_intermediate/customers_validated.csv
+  save_args:
+      lineterminator: "\n"
+  
 
-loans_ingested:
+loans_validated:
   type: partitions.PartitionedDataset
-  path: data/02_intermediate/loans_ingested
+  path: data/02_intermediate/loans_validated
   dataset:
     type: pandas.CSVDataset
+    save_args:
+      lineterminator: "\n"
   filename_suffix: ".csv"
 
-loans_hist_ingested:
+loans_hist_validated:
   type: pandas.CSVDataset
-  filepath: data/02_intermediate/loans_hist_ingested.csv
+  save_args:
+      lineterminator: "\n"
+  filepath: data/02_intermediate/loans_hist_validated.csv
 
-funds_ingested:
+funds_validated:
   type: pandas.CSVDataset
-  filepath: data/02_intermediate/funds_ingested.csv
+  save_args:
+      lineterminator: "\n"
+  filepath: data/02_intermediate/funds_validated.csv
 
-transactions_ingested:
+transactions_validated:
   type: pandas.CSVDataset
-  filepath: data/02_intermediate/transactions_ingested.csv
+  save_args:
+      lineterminator: "\n"
+  filepath: data/02_intermediate/transactions_validated.csv
 
 
 # #03_primary data
