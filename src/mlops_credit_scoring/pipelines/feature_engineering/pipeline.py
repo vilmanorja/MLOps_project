@@ -12,17 +12,12 @@ from .nodes import (  # assuming your functions are in nodes.py
     extract_active_loans_features_batch,
     extract_loans_features_batch,
     merge_features_with_target_loans_batch,
-    extract_transactions_features_batch
+    extract_transactions_features_batch,
+    extract_customer_demographics_features_batch
 )
 
 def create_pipeline(**kwargs) -> Pipeline:
     return pipeline([
-        # node(
-        #     func=extract_transactions_features,
-        #     inputs=["transactions_validated","params:run_date"],
-        #     outputs="transactional_summary_{}",
-        #     name="transaction_features_node",
-        # ),
         node(
             func=extract_funds_features_batch,
             inputs=["funds_validated","params:run_date"],
@@ -53,6 +48,13 @@ def create_pipeline(**kwargs) -> Pipeline:
             outputs="transactional_summaries",
             name="transaction_features_batch_node"
         )
+        ,
+        node(
+            func=extract_customer_demographics_features_batch,
+            inputs=["customers_validated", "loans_to_predict", "params:run_date"],
+            outputs="customer_demographics_features",
+            name="extract_customer_demographics_features_batch_node"
+        )
         ,node(
             func=merge_features_with_target_loans_batch,
             inputs=[
@@ -61,10 +63,11 @@ def create_pipeline(**kwargs) -> Pipeline:
                 "funds_summaries",
                 "prev_loans_summaries",
                 "active_loans_summaries",
+                "customer_demographics_features",
                 "params:run_date"
             ],
-            outputs="behavior_features",
+            outputs="customer_features",
             # outputs="model_input_table"
             name="merge_features_node",
-        ),
+        )
         ])

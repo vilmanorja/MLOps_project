@@ -157,12 +157,63 @@ def extract_loans_features_batch(loans_files: dict[str, object], run_date: list[
     return results
 
 
+def extract_customer_demographics_features(customers: pd.DataFrame, customer_ids: pd.Series, ref_date: str) -> pd.DataFrame:
+    ref_date = pd.to_datetime(ref_date, format="%Y%m%d")
+
+    filtered_customers = customers[customers["NewId"].isin(customer_ids)].copy()
+
+    filtered_customers["DateOfBirth"] = pd.to_datetime(filtered_customers["DateOfBirth"], errors="coerce")
+    filtered_customers["BirthInCorpDate"] = pd.to_datetime(filtered_customers["BirthInCorpDate"], errors="coerce")
+    filtered_customers["DateOfBirthFilled"] = filtered_customers["DateOfBirth"].fillna(filtered_customers["BirthInCorpDate"])
+
+    filtered_customers["Age"] = ((ref_date - filtered_customers["DateOfBirthFilled"]).dt.days // 365).fillna(0).astype(int)
+
+    employed_values = ["EMPLOYED", "SELF-EMPLOYED", "TPE", "MB", "LP"]
+    filtered_customers["Is_Employed"] = filtered_customers["EmploymentStatus"].isin(employed_values).astype(int)
+    filtered_customers["Is_Married"] = filtered_customers["MaritalStatus"].isin(["MARRIED", "PARTNER"]).astype(int)
+
+    filtered_customers = filtered_customers[~filtered_customers["SegGroup"].isna()].copy()
+    filtered_customers = filtered_customers.rename(columns={"NewId": "CustomerId"})
+    filtered_customers["YrNetMonthlyIn"]=filtered_customers["YrNetMonthlyIn"].fillna(0)
+
+
+    result = filtered_customers[[
+        "CustomerId", "SegGroup", "AMLRiskRating", "YrNetMonthlyIn",
+        "Age", "Is_Employed", "Is_Married"
+    ]]
+    result["run_date"] = ref_date.strftime("%Y%m%d")
+    return result
+
+def extract_customer_demographics_features_batch(
+    customers: pd.DataFrame,
+    loans_to_predict: dict[str, pd.DataFrame],
+    run_date: list[str]
+) -> dict:
+    results = {}
+
+    for date in run_date:
+        key = f"customer_loans_to_predict_{date}"
+        dataset_loader = loans_to_predict.get(key)
+
+        if dataset_loader is None:
+            print(f"Skipping {date} — missing loans_to_predict")
+            continue
+
+        loans_df = dataset_loader()
+        customer_ids = loans_df["CustomerId"].unique()
+
+        demographics_df = extract_customer_demographics_features(customers, customer_ids, date)
+        results[f"customer_demographics_features_{date}"] = demographics_df
+
+    return results
+
 def merge_features_with_target_loans(
     loans_to_predict: pd.DataFrame,
     transactional_summary: pd.DataFrame,
     funds_summary: pd.DataFrame,
     previous_loans_summary: pd.DataFrame,
-    active_loans_summary: pd.DataFrame
+    active_loans_summary: pd.DataFrame,
+    customer_demographics: pd.DataFrame
 ) -> pd.DataFrame:
     df = loans_to_predict.copy()
 
@@ -170,8 +221,10 @@ def merge_features_with_target_loans(
     df = df.merge(funds_summary, on=["CustomerId", "run_date"], how="left")
     df = df.merge(previous_loans_summary, on=["CustomerId", "run_date"], how="left")
     df = df.merge(active_loans_summary, on=["CustomerId", "run_date"], how="left")
+    df = df.merge(customer_demographics, on=["CustomerId", "run_date"], how="left")
 
     return df.fillna(0)
+
 
 def merge_features_with_target_loans_batch(
     loans_to_predict: dict[str, pd.DataFrame],
@@ -179,9 +232,10 @@ def merge_features_with_target_loans_batch(
     funds_summaries: dict[str, pd.DataFrame],
     prev_loans_summaries: dict[str, pd.DataFrame],
     active_loans_summaries: dict[str, pd.DataFrame],
+    customer_demographics_summaries: dict[str, pd.DataFrame],
     run_date: list[str]
 ) -> pd.DataFrame:
-    
+
     results = []
 
     for date in run_date:
@@ -190,15 +244,18 @@ def merge_features_with_target_loans_batch(
         funds_df = funds_summaries.get(f"customer_funds_summary_{date}")()
         prev_df = prev_loans_summaries.get(f"customer_prev_loans_summary_{date}")()
         active_df = active_loans_summaries.get(f"customer_active_loans_summary_{date}")()
+        demo_df = customer_demographics_summaries.get(f"customer_demographics_features_{date}")()
 
         if loans_df is None:
             continue
+
         df_merged = merge_features_with_target_loans(
             loans_df,
-            tx_df if tx_df is not None else pd.DataFrame(columns=["CustomerId"]),
-            funds_df if funds_df is not None else pd.DataFrame(columns=["CustomerId"]),
-            prev_df if prev_df is not None else pd.DataFrame(columns=["CustomerId"]),
-            active_df if active_df is not None else pd.DataFrame(columns=["CustomerId"])
+            tx_df if tx_df is not None else pd.DataFrame(columns=["CustomerId", "run_date"]),
+            funds_df if funds_df is not None else pd.DataFrame(columns=["CustomerId", "run_date"]),
+            prev_df if prev_df is not None else pd.DataFrame(columns=["CustomerId", "run_date"]),
+            active_df if active_df is not None else pd.DataFrame(columns=["CustomerId", "run_date"]),
+            demo_df if demo_df is not None else pd.DataFrame(columns=["CustomerId", "run_date"])
         )
 
         df_merged["run_date"] = date

@@ -5,14 +5,11 @@
 
 
 
-# Raw data
+#01_raw: Raw data
 customers_raw_data:
   type: pandas.CSVDataset
   filepath: data/01_raw/Customers.csv
 
-# loans_raw_data:
-#   type: pandas.CSVDataset
-#   filepath: data/01_raw/Loans_20240131.csv
 loans_raw_data:
   type: partitions.PartitionedDataset
   path: data/01_raw/loans/
@@ -34,13 +31,14 @@ transactions_raw_data:
   filepath: data/01_raw/Transactions_to_20240331.csv
 
 
-#Ingested ---we should create for each of the datsets, as we did for customers
+#02_intermediate: Ingested and Validated
 customers_validated:
   type: pandas.CSVDataset
   filepath: data/02_intermediate/customers_validated.csv
+  load_args:
+    encoding: ISO-8859-1  # Optional, if your file needs it
   save_args:
-      lineterminator: "\n"
-  
+    lineterminator: "\n"
 
 loans_validated:
   type: partitions.PartitionedDataset
@@ -70,14 +68,7 @@ transactions_validated:
   filepath: data/02_intermediate/transactions_validated.csv
 
 
-# #03_primary data
-# transactional_summary:
-#   type: pandas.CSVDataset
-#   filepath: data/03_primary/customer_transactional_summary.csv
-#   save_args:
-#     lineterminator: "\n"
-
-
+#03_primary: features data #
 transactional_summaries:
   type: partitions.PartitionedDataset
   path: data/03_primary/transactional_summaries/
@@ -125,16 +116,24 @@ loans_to_predict:
       lineterminator: "\n"
   filename_suffix: ".csv"
 
-behavior_features:
-  type: pandas.CSVDataset
-  filepath: data/03_primary/customer_behavior_features.csv
-  save_args:
-    lineterminator: "\n"
+
+customer_demographics_features:
+  type: partitions.PartitionedDataset
+  path: data/03_primary/demographics/
+  dataset:
+    type: pandas.CSVDataset
+    save_args:
+      lineterminator: "\n"
+  filename_suffix: ".csv"
 
 
 
 #04_feature data
-
+customer_features:
+  type: pandas.CSVDataset
+  filepath: data/04_feature/customer_features.csv
+  save_args:
+    lineterminator: "\n"
 
 
 
