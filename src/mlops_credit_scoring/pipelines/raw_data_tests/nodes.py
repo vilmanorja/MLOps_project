@@ -113,6 +113,30 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
                 )
             )
 
+        object_features = ['CustomerSince', 'CustomerStatus', 'DateOfBirth', 'EmploymentStatus',
+       'Gender', 'MaritalStatus', 'Placebrth', 'CustType', 'Nationality',
+       'OcupationDesc', 'ResidenceCode', 'ResidenceStatus', 'ResidenceType',
+       'SegGroup', 'Title', 'TownCountry', 'BirthInCorpDate', 'CustType.1',
+       'Habliter', 'Province', 'District', 'LegalDocName1IdDescription',
+       'LegalIssDate', 'LegalExpDate', 'LegalIssAuth', 'AMLRiskRating']
+
+        for i in object_features:
+            expectation_suite_bank.add_expectation(
+                ExpectationConfiguration(
+                    expectation_type="expect_column_to_exist",
+                    kwargs={"column": i}
+                )
+            )
+
+        for i in object_features:
+            expectation_suite_bank.add_expectation(
+                ExpectationConfiguration(
+                    expectation_type="expect_column_values_to_be_of_type",
+                    kwargs={"column": i, "type_": "object"}
+                )
+            )
+
+
     if feature_group == 'loans_features':
 
         for i in ['CustomerNewId', 'ContractId', 'HasDefault']:
@@ -291,9 +315,9 @@ def test_data(df, funds, transactions, loans_files, loans_hist, run_date):
             continue
         loans = dataset()
 
-    logger.info(f"The dataset contains {len(df.columns)} columns.")
-    logger.info(f"The dataset contains {len(loans.columns)} columns.")
-    logger.info(f"The dataset contains {len(funds.columns)} columns.")
+    # logger.info(f"The dataset contains {len(df.columns)} columns.")
+    # logger.info(f"The dataset contains {len(loans.columns)} columns.")
+    # logger.info(f"The dataset contains {len(funds.columns)} columns.")
     df = df.reset_index()
     funds = funds.reset_index()
     transactions = transactions.reset_index()
@@ -421,7 +445,7 @@ def test_data(df, funds, transactions, loans_files, loans_hist, run_date):
     logger.info("Data passed on the unit data tests")
     logger.info(f'All raw data tests passed: {df_validation[df_validation.Success == False].empty}')
 
-    return df_validation, df, funds, transactions, loans, loans_hist 
+    return df_validation, df, funds, transactions, loans_files, loans_hist 
 
 
 
