@@ -67,6 +67,44 @@ transactions_validated:
       lineterminator: "\n"
   filepath: data/02_intermediate/transactions_validated.csv
 
+#02_intermediate: Cleaned data
+customers_cleaned:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/customers_cleaned.csv
+  save_args:
+    index: False
+    lineterminator: "\n"
+
+loans_cleaned:
+  type: partitions.PartitionedDataset
+  path: data/02_intermediate/loans_cleaned
+  dataset:
+    type: pandas.CSVDataset
+    save_args:
+      index: False
+      lineterminator: "\n"
+  filename_suffix: ".csv"
+
+loans_hist_cleaned:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/loans_hist_cleaned.csv
+  save_args:
+    index: False
+    lineterminator: "\n"
+
+funds_cleaned:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/funds_cleaned.csv
+  save_args:
+    index: False
+    lineterminator: "\n"
+
+transactions_cleaned:
+  type: pandas.CSVDataset
+  filepath: data/02_intermediate/transactions_cleaned.csv
+  save_args:
+    index: False
+    lineterminator: "\n"
 
 #03_primary: features data #
 transactional_summaries:
@@ -134,10 +172,6 @@ customer_features:
   filepath: data/04_feature/customer_features.csv
   save_args:
     lineterminator: "\n"
-
-
-
-
 
 reporting_tests_raw:
   type: pandas.CSVDataset

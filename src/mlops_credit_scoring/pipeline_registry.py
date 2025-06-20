@@ -25,6 +25,7 @@ from kedro.pipeline import Pipeline, pipeline
 from mlops_credit_scoring.pipelines import (
     raw_data_tests as raw_data_tests,
     ingestion as data_ingestion,
+    data_cleaning,
     data_unit_tests as data_tests,
     feature_engineering as feature_engineering,
     preprocessing_train as preprocess_train,
@@ -47,6 +48,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
     raw_data_tests_pipeline = raw_data_tests.create_pipeline()
     ingestion_pipeline = data_ingestion.create_pipeline()
     data_unit_tests_pipeline = data_tests.create_pipeline()
+    data_cleaning_pipeline = data_cleaning.create_pipeline()
     feature_engineering_pipeline = feature_engineering.create_pipeline()
     split_data_pipeline = split_data.create_pipeline()
     preprocess_train_pipeline = preprocess_train.create_pipeline()
@@ -60,6 +62,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
     return {
         "raw_data_tests": raw_data_tests_pipeline,
         "ingestion": ingestion_pipeline,
+        "data_cleaning": data_cleaning_pipeline,
         "data_unit_tests": data_unit_tests_pipeline,
         "split_data": split_data_pipeline,
         "feature_engineering":feature_engineering_pipeline,
