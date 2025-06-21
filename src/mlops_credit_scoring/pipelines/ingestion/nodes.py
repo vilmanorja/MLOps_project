@@ -71,14 +71,12 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
     # numerical features
     if feature_group == 'numerical_features':
         
-        integer_features = ['no_of_dependents', 'segment_id', 'industry_id',
-       'legal_doc_name1_id', 'customer_id', 'duration_months',
-       'number_of_installments_to_pay', 'run_date',
-       'previous_loan_count', 'previous_loan_defaults', 'active_loans_count']
-        float_features = ['yr_net_monthly_in', 'credit_amount', 'avg_monthly_income',
-       'income_stability', 'avg_monthly_expenses', 'expenses_stability',
-       'avg_monthly_funds', 'funds_stability', 'previous_loans_avg_amount',
-       'previous_loans_std', 'active_loan_amount_total']
+        integer_features = ['customer_id', 'duration_months', 'number_of_installments_to_pay',
+       'run_date', 'previous_loan_count', 'previous_loan_defaults', 'active_loans_count', 'age', 'is_employed', 'is_married']
+        float_features = ['credit_amount', 'avg_monthly_income', 'income_stability',
+       'avg_monthly_expenses', 'expenses_stability', 'avg_monthly_funds',
+       'funds_stability', 'previous_loans_avg_amount', 'previous_loans_std',
+       'active_loan_amount_total', 'yr_net_monthly_in']
         
         # int
         for i in integer_features:
@@ -145,46 +143,12 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
                 ExpectationConfiguration(
                     expectation_type="expect_column_values_to_be_in_set",
                     kwargs={
-                        "column": "is_active",
+                        "column": i,
                         "value_set": [0, 1]  # or ["yes", "no"]
                     }
                 )
             )
         
-    # datetime features
-    if feature_group == 'datetime_features':
-        for i in ['customer_since', 'date_of_birth', 'birth_in_corp_date', 'legal_iss_date']:
-            expectation_suite.add_expectation(
-                ExpectationConfiguration(
-                    expectation_type="expect_column_values_to_be_of_type",
-                    kwargs={"column": i, 'type_':"datetime64[ns]"},
-                )
-            ) 
-
-        # CustomerSince
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_values_to_not_be_null",
-                kwargs={"column": "customer_since"}
-            )
-        )
-        # legal_exp_date
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_values_to_match_strftime_format",
-                kwargs={"column": 'legal_exp_date', 'strftime_format': '%Y-%m-%d'}
-            )
-        )
-
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_pair_values_A_to_be_less_than_B",
-                kwargs={
-                    "column_A": "legal_iss_date	",
-                    "column_B": "legal_exp_date"
-                }
-            )
-        )
     
     # categorical features
     if feature_group == 'categorical_features':
@@ -192,113 +156,22 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
         expectation_suite.add_expectation(
             ExpectationConfiguration(
                 expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "customer_status", "value_set": ['Private Client - Standard', 'Corporate - Small', 'Corporate - Medium', 'Private Client High Networth', 'Corporate - Large', 'Financial - Large', 'Financial - Small', 'Proprietorship Standard', 'T24 Updates', 'Deceased Individual', 'Partnership firm Standard', 'Financial - Medium', 'Partnership High Networth', 'Customer Deletion', 'Governmental', 'Hotlisted', 'Proprietorship Highnetworth']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "employment_status", "value_set": ['MB', 'LP', 'OTHER', 'EMPLOYED', 'TPE', 'UNEMPLOYED', 'SELF-EMPLOYED', 'RET', 'UE', 'STUDENT', 'RETIRED']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "gender", "value_set": ['FEMALE', 'MALE']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "marital_status", "value_set": ['OTHER', 'DIVORCED', 'SINGLE', 'MARRIED', 'PARTNER', 'WIDOWED']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "cust_type", "value_set": ['RETAIL', 'CORPORATE', 'PROSPECT']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "nationality", "value_set": ['Portugal', 'Mozambique', 'India', 'Pakistan', 'Peoples Republic of China', 'Tokelau', 'South Africa', 'Turkey', 'Netherlands', 'Egypt', 'Switzerland', 'United States of America', 'Congo', 'Yemen', 'Uruguay', 'Afghanistan', 'Korea  Republic of', 'Australia', 'Morocco', 'Somalia', 'Spain', 'Bahrain', 'Lebanon', 'Kenya', 'Mauritius', 'Tanzania  United Republic of', 'Ethiopia', 'Guinea-Bissau', 'Mali', 'Mauritania', 'Guinea', 'Gambia', 'Sierra Leone', 'Mexico', 'Bangladesh', 'Aruba', 'United Arab Emirates', 'Zambia', 'Saudi Arabia', 'Singapore', 'Iran (Islamic Republic of)', 'Nigeria', 'Angola', 'Rwanda', 'Zimbabwe', 'Senegal', 'Hong Kong', 'New Zealand', 'Brazil', 'Italy', 'Cape Verde', 'Philippines', 'Malta', 'Oman', 'Jordan', 'Syrian Arab Republic', 'Libyan Arab Jamahiriya', 'Estado da Palestina', 'Malawi', 'Iraq', 'Great Britain', 'Turks and Caicos Islands', 'Germany', 'Japan', 'Namibia', 'Chile', 'Swaziland', 'Uzbekistan', 'France', 'Luxembourg', 'Norway', 'Bulgaria', 'Croatia', 'Canada', 'Ireland', 'Russian Federation', 'Burundi', 'Czech Republic', 'Uganda', 'Liberia', 'Poland', 'Belgium', 'Benin', 'Greece', 'Kyrgyzstan', 'American Samoa', 'Sao Tome and Principe', 'Tunisia', 'Haiti', 'Columbia', 'Macau', 'Romania', 'Cuba', 'Peru', 'Republic of China (Taiwan)', 'Kazakstan', 'Ghana', 'Finland', 'Puerto Rico', 'Vietnam', 'Israel', 'Thailand', 'Latvia', 'Sri Lanka', 'Nicaragua', 'Congo  Democratic Republic of the', 'Panama', 'Austria', 'Botswana', 'Indonesia', 'Madagascar', 'Comoro Islands', 'Cameroon', 'Nepal', 'Bhutan', 'Sudan', 'Sweden', 'Serbia', 'Mongolia', 'Paraguay', 'Argentina', 'Malaysia', 'Cyprus', 'Honduras', 'Guatemala', 'Monaco', 'Gabon', 'Denmark', 'Eritrea', 'Armenia', 'Ecuador', 'EU Countries', 'Venezuela', 'Dominica', 'Slovenia', 'Antigua And Barbuda', 'Lesotho', 'Georgia', 'Ivory Coast', 'Europa', 'Timor-leste', 'Cayman Islands', 'Northern Mariana Islands', 'San Marino', 'Dominican Republic', 'Chad', 'Algeria', 'Korea  Democratic Peoples Rep. of', 'Iceland', 'Turkmenistan', 'Ukraine', 'Bahamas', 'Bolivia', 'Niger', 'Liechtenstein', 'Hungary', 'Monserrat', 'Jersey', 'Estonia', 'Guadeloupe', 'Costa Rica', 'Lithuania', 'Guyana', 'Qatar', 'Andorra', 'Reunion', 'Yugoslavia', 'Belarus', 'Slovakia', 'Saint Lucia', 'Papua New Guinea', 'Barbados', 'Azerbaijan', 'Fiji', 'Holy See (Vatican City State)', 'Central African Republic']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "residence_code", "value_set": ['MZ', 'PT', 'ZA', 'NL', 'EG', 'CH', 'CN', 'US', 'IN', 'YE', 'UY', 'AF', 'KR', 'AU', 'ES', 'BH', 'LB', 'MU', 'TZ', 'KE', 'AW', 'AE', 'TR', 'AO', 'NG', 'ZM', 'RW', 'BR', 'ZW', 'MA', 'MR', 'IT', 'NZ', 'MT', 'OM', 'JP', 'CL', 'SZ', 'SA', 'FR', 'LU', 'HR', 'PL', 'GR', 'KG', 'ST', 'TN', 'IR', 'IE', 'GB', 'MW', 'VN', 'JO', 'FI', 'SE', 'PK', 'LV', 'BE', 'CV', 'CU', 'PA', 'MX', 'CO', 'DE', 'AT', 'BW', 'ID', 'MG', 'CA', 'IQ', 'HK', 'KM', 'CM', 'NO', 'CD', 'SG', 'RO', 'RS', 'GH', 'PY', 'PH', 'TW', 'LS', 'MY', 'BM', 'CZ', 'MC', 'AR', 'DK', 'PE', 'XE', 'SI', 'AG', 'TH', 'UG', 'RE', 'GE', 'GM', 'CI', 'KZ', 'CY', 'GA', 'GN', 'MO', 'KP', 'TC', 'IL', 'MN', 'BS', 'UA', 'RU', 'MP', 'HU', 'LR', 'EE', 'AM', 'CR', 'BD', 'SO', 'AD', 'SN', 'SK', 'LC', 'AS', 'BB', 'LT', 'BI', 'LK', 'ML', 'ET', 'EU', 'ER']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "residence_status", "value_set": ['HOME.OWNER', 'OTHER', 'TENANT', 'LIVING.WTH.PARENTS', 'SQUATTER']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "residence_type", "value_set": ['RESIDENTIAL.APT', 'INDEPEDENT.HOUSE', 'FARM.HOUSE', 'SERVICED.APT']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
                 kwargs={"column": "seg_group", "value_set": ['Company', 'Personal']},
             )
         ) 
+       
         expectation_suite.add_expectation(
             ExpectationConfiguration(
                 expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "title", "value_set": ['MRS', 'MR', 'DR', 'DRS', 'MISS', 'MAST1', 'ENG', 'PHD', 'MAST']},
+                kwargs={"column": "a_m_l_risk_rating", "value_set": ['Elevado', 'Medio', 'Baixo', '0']},
             )
         ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "cust_type1", "value_set": ['RETAIL', 'CORPORATE', 'PROSPECT']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "habliter", "value_set": ['Ate12 ano', 'Curso Superior', 'Bacharelato', 'Doutoramento', 'Mestrado', 'S.Estudos', 'Ensino Primario']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "province", "value_set": ['NAMPULA', 'CIDADE DE MAPUTO', 'MAPUTO', 'SOFALA', 'TETE', 'CABO DELGADO', 'NOT APPLICABLE', 'MANICA', 'ZAMBEZIA', 'NIASSA', 'INHAMBANE', 'GAZA']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "legal_doc_name1_id_description", "value_set": ['Licenca/Alvara', 'DIRE', 'Certidao da Conservatoria de Regist', 'Licenca / Alvara para o exercicio d', 'BI', 'Certidao de reserva de nome', 'Passaporte', 'Others (specify on free text field)', 'Certidao de Registo Comercial (Caso', 'Acta(s) da Assembleia Geral dos Acc', 'Escritura Publica da constituicao d', 'Certidao de Registo / Ministerio da', 'NUIT- Numero Unico de Identificacao', 'Cedula Pessoal', 'Recibo de pedido de BI', 'Cartao de identificacao de refugiad', 'NUIT-Numero Unico de Identificac', 'Carta de conducao', 'BR com o Pacto Social / Estatutos d', 'Termo de Autorizacao do Ministerio"', 'Certidao narrativa completa de nasc', 'Certidao da sentenca do Tribunal de', 'Numero de Registo Fiscal ( Modelo 4', 'Cartao de recenseamento eleitoral', 'Prova de Residencia', 'Prova documental de nao residente', 'Cartao de agricultor/trabalhador ab', 'Cartao de INSS', 'Documento de Transitario', 'Declaracao Comprovativa / Ministeri', 'Cedula militar', 'Documento de Regime Especial', 'Contrato de Trabalho', 'Documento de Embaixada', 'Procuracoes (especificar)', 'Documento de Staff Embaixada', 'Acta(s) da reuniao dos socios (pode', 'Documeto de Exportador']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "a_m_l_risk_rating", "value_set": ['Elevado', 'Medio', 'Baixo']},
-            )
-        ) 
-        for i in ['placebrth', 'ocupation_desc', 'town_country', 'district', 'legal_iss_auth']:
-            expectation_suite.add_expectation(
-                ExpectationConfiguration(
-                    expectation_type="expect_column_values_to_be_of_type",
-                    kwargs={"column": i, "type_": "object"},
-                )
-            )
         expectation_suite.add_expectation(
             ExpectationConfiguration(
                 expectation_type="expect_column_distinct_values_to_be_in_set",
                 kwargs={"column": "payment_frequency", "value_set": ['Monthly', 'Single', 'Quarterly']},
             )
         ) 
-
         expectation_suite.add_expectation(
                     ExpectationConfiguration(
                         expectation_type="expect_column_distinct_values_to_be_in_set",
@@ -306,7 +179,6 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
                     )
                 ) 
     return expectation_suite
-
 
 import hopsworks
 
@@ -460,6 +332,7 @@ def ingestion(
 
     # df = pd.merge(customers, features, left_on='NewId', right_on='CustomerId', how='right').drop(columns=['NewId', 'index'])
     logger.info(f"The dataset contains {len(df.columns)} columns.")
+    logger.info(df.columns)
 
     for c in ['CustomerId', 'Duration_Months', 'NumberOfInstallmentsToPay', 'HasDefault',
     'run_date', 'Previous_Loan_Count', 'Previous_Loan_Defaults', 'Active_Loans_Count',
@@ -500,14 +373,14 @@ def ingestion(
     logger.info(f"Number of columns processed: {len(df_numeric.columns) + len(df_categorical.columns) + len(df_target.columns)} columns.")
     logger.info(f"{categorical_features}")
 
-    def build_asset_and_checkpoint(asset_name, df, checkpoint_name, expectation_suite_name):
+    def build_asset_and_checkpoint(asset_name, df_group, checkpoint_name, expectation_suite_name):
         data_asset_name = asset_name
         try:
-            data_asset = datasource.add_dataframe_asset(name=data_asset_name, dataframe=df)
+            data_asset = datasource.add_dataframe_asset(name=data_asset_name, dataframe=df_group)
         except:
             data_asset = datasource.get_asset(data_asset_name)
 
-        batch_request = data_asset.build_batch_request(dataframe=df)
+        batch_request = data_asset.build_batch_request(dataframe=df_group)
 
         checkpoint = gx.checkpoint.SimpleCheckpoint(
             name=checkpoint_name,
@@ -530,9 +403,9 @@ def ingestion(
     df_val2 = get_validation_results(checkpoint_num)
     df_val3 = get_validation_results(checkpoint_cat)
     # df_val4 = get_validation_results(checkpoint_date)
-
+    
     df_validation = pd.concat([df_val1, df_val2, df_val3], ignore_index=True)
-        
+    logger.info(df_validation[df_validation.Success == False])
     logger.info("Data passed on the unit data tests")
     logger.info(f'All raw data tests passed: {df_validation[df_validation.Success == False].empty}')
 

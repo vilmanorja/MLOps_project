@@ -148,6 +148,18 @@ fluent_datasources:
       date_features:
         type: dataframe
         batch_metadata: {}
+  project_data_feature_engineered:
+    type: pandas
+    assets:
+      target:
+        type: dataframe
+        batch_metadata: {}
+      numerical_features:
+        type: dataframe
+        batch_metadata: {}
+      categorical_features:
+        type: dataframe
+        batch_metadata: {}
 notebooks:
 include_rendered_content:
   globally: false
