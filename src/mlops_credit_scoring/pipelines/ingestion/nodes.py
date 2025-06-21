@@ -6,6 +6,8 @@ import pandas as pd
 from datetime import datetime
 import re
 
+import great_expectations as gx
+import os
 from great_expectations.core import ExpectationSuite, ExpectationConfiguration
 # from great_expectations.core.expectation_suite import ExpectationSuite
 # from great_expectations.expectations.expectation_configuration import ExpectationConfiguration
@@ -43,17 +45,38 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
     #expectation_suite = context.add_expectation_suite("my_suite")
     #context.save_expectation_suite(expectation_suite)
 
+    # target
+    if feature_group == 'target':
+        expectation_suite.add_expectation(
+                    ExpectationConfiguration(
+                        expectation_type="expect_column_values_to_be_of_type",
+                        kwargs={"column": 'has_default', "type_": "int64"},
+                    )
+                )
+        expectation_suite.add_expectation(
+                ExpectationConfiguration(
+                    expectation_type="expect_column_values_to_be_in_set",
+                    kwargs={
+                        "column": "has_default",
+                        "value_set": [0, 1]  # or ["yes", "no"]
+                    }
+                )
+            )
+        expectation_suite.add_expectation(
+            ExpectationConfiguration(
+                expectation_type="expect_column_values_to_not_be_null",
+                kwargs={"column": 'has_default'}
+            )
+        )
     # numerical features
     if feature_group == 'numerical_features':
         
-        integer_features = ['no_of_dependents', 'segment_id', 'industry_id',
-       'legal_doc_name1_id', 'customer_id', 'duration_months',
-       'number_of_installments_to_pay', 'has_default', 'run_date',
-       'previous_loan_count', 'previous_loan_defaults', 'active_loans_count']
-        float_features = ['yr_net_monthly_in', 'credit_amount', 'avg_monthly_income',
-       'income_stability', 'avg_monthly_expenses', 'expenses_stability',
-       'avg_monthly_funds', 'funds_stability', 'previous_loans_avg_amount',
-       'previous_loans_std', 'active_loan_amount_total']
+        integer_features = ['customer_id', 'duration_months', 'number_of_installments_to_pay',
+       'run_date', 'previous_loan_count', 'previous_loan_defaults', 'active_loans_count', 'age', 'is_employed', 'is_married']
+        float_features = ['credit_amount', 'avg_monthly_income', 'income_stability',
+       'avg_monthly_expenses', 'expenses_stability', 'avg_monthly_funds',
+       'funds_stability', 'previous_loans_avg_amount', 'previous_loans_std',
+       'active_loan_amount_total', 'yr_net_monthly_in']
         
         # int
         for i in integer_features:
@@ -102,46 +125,30 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
                     }
                 )
             )
-        
-    # datetime features
-    if feature_group == 'datetime_features':
-        for i in ['customer_since', 'date_of_birth', 'birth_in_corp_date', 'legal_iss_date']:
-            expectation_suite.add_expectation(
-                ExpectationConfiguration(
-                    expectation_type="expect_column_values_to_be_of_type",
-                    kwargs={"column": i, 'type_':"datetime64[ns]"},
-                )
-            ) 
-            # expectation_suite.add_expectation(
-                # ExpectationConfiguration(
-                #     expectation_type="expect_column_values_to_match_strftime_format",
-                #     kwargs={"column": i, 'strftime_format': '%Y-%m-%d'}
-                # )
-            # )
-        # CustomerSince
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_values_to_not_be_null",
-                kwargs={"column": "customer_since"}
-            )
-        )
-        # legal_exp_date
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_values_to_match_strftime_format",
-                kwargs={"column": 'legal_exp_date', 'strftime_format': '%Y-%m-%d'}
-            )
-        )
 
         expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_pair_values_A_to_be_less_than_B",
-                kwargs={
-                    "column_A": "legal_iss_date	",
-                    "column_B": "legal_exp_date"
-                }
+                ExpectationConfiguration(
+                    expectation_type="expect_column_values_to_be_between",
+                    kwargs={
+                        "column": 'age',
+                        "min_value": 0,
+                        "strict_min": True,
+                        "max_value": 120  # No upper bound
+                    }
+                )
             )
-        )
+        
+        for i in ['is_employed', 'is_married']:
+            expectation_suite.add_expectation(
+                ExpectationConfiguration(
+                    expectation_type="expect_column_values_to_be_in_set",
+                    kwargs={
+                        "column": i,
+                        "value_set": [0, 1]  # or ["yes", "no"]
+                    }
+                )
+            )
+        
     
     # categorical features
     if feature_group == 'categorical_features':
@@ -149,113 +156,22 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
         expectation_suite.add_expectation(
             ExpectationConfiguration(
                 expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "customer_status", "value_set": ['Private Client - Standard', 'Corporate - Small', 'Corporate - Medium', 'Private Client High Networth', 'Corporate - Large', 'Financial - Large', 'Financial - Small', 'Proprietorship Standard', 'T24 Updates', 'Deceased Individual', 'Partnership firm Standard', 'Financial - Medium', 'Partnership High Networth', 'Customer Deletion', 'Governmental', 'Hotlisted', 'Proprietorship Highnetworth']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "employment_status", "value_set": ['MB', 'LP', 'OTHER', 'EMPLOYED', 'TPE', 'UNEMPLOYED', 'SELF-EMPLOYED', 'RET', 'UE', 'STUDENT', 'RETIRED']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "gender", "value_set": ['FEMALE', 'MALE']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "marital_status", "value_set": ['OTHER', 'DIVORCED', 'SINGLE', 'MARRIED', 'PARTNER', 'WIDOWED']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "cust_type", "value_set": ['RETAIL', 'CORPORATE', 'PROSPECT']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "nationality", "value_set": ['Portugal', 'Mozambique', 'India', 'Pakistan', 'Peoples Republic of China', 'Tokelau', 'South Africa', 'Turkey', 'Netherlands', 'Egypt', 'Switzerland', 'United States of America', 'Congo', 'Yemen', 'Uruguay', 'Afghanistan', 'Korea  Republic of', 'Australia', 'Morocco', 'Somalia', 'Spain', 'Bahrain', 'Lebanon', 'Kenya', 'Mauritius', 'Tanzania  United Republic of', 'Ethiopia', 'Guinea-Bissau', 'Mali', 'Mauritania', 'Guinea', 'Gambia', 'Sierra Leone', 'Mexico', 'Bangladesh', 'Aruba', 'United Arab Emirates', 'Zambia', 'Saudi Arabia', 'Singapore', 'Iran (Islamic Republic of)', 'Nigeria', 'Angola', 'Rwanda', 'Zimbabwe', 'Senegal', 'Hong Kong', 'New Zealand', 'Brazil', 'Italy', 'Cape Verde', 'Philippines', 'Malta', 'Oman', 'Jordan', 'Syrian Arab Republic', 'Libyan Arab Jamahiriya', 'Estado da Palestina', 'Malawi', 'Iraq', 'Great Britain', 'Turks and Caicos Islands', 'Germany', 'Japan', 'Namibia', 'Chile', 'Swaziland', 'Uzbekistan', 'France', 'Luxembourg', 'Norway', 'Bulgaria', 'Croatia', 'Canada', 'Ireland', 'Russian Federation', 'Burundi', 'Czech Republic', 'Uganda', 'Liberia', 'Poland', 'Belgium', 'Benin', 'Greece', 'Kyrgyzstan', 'American Samoa', 'Sao Tome and Principe', 'Tunisia', 'Haiti', 'Columbia', 'Macau', 'Romania', 'Cuba', 'Peru', 'Republic of China (Taiwan)', 'Kazakstan', 'Ghana', 'Finland', 'Puerto Rico', 'Vietnam', 'Israel', 'Thailand', 'Latvia', 'Sri Lanka', 'Nicaragua', 'Congo  Democratic Republic of the', 'Panama', 'Austria', 'Botswana', 'Indonesia', 'Madagascar', 'Comoro Islands', 'Cameroon', 'Nepal', 'Bhutan', 'Sudan', 'Sweden', 'Serbia', 'Mongolia', 'Paraguay', 'Argentina', 'Malaysia', 'Cyprus', 'Honduras', 'Guatemala', 'Monaco', 'Gabon', 'Denmark', 'Eritrea', 'Armenia', 'Ecuador', 'EU Countries', 'Venezuela', 'Dominica', 'Slovenia', 'Antigua And Barbuda', 'Lesotho', 'Georgia', 'Ivory Coast', 'Europa', 'Timor-leste', 'Cayman Islands', 'Northern Mariana Islands', 'San Marino', 'Dominican Republic', 'Chad', 'Algeria', 'Korea  Democratic Peoples Rep. of', 'Iceland', 'Turkmenistan', 'Ukraine', 'Bahamas', 'Bolivia', 'Niger', 'Liechtenstein', 'Hungary', 'Monserrat', 'Jersey', 'Estonia', 'Guadeloupe', 'Costa Rica', 'Lithuania', 'Guyana', 'Qatar', 'Andorra', 'Reunion', 'Yugoslavia', 'Belarus', 'Slovakia', 'Saint Lucia', 'Papua New Guinea', 'Barbados', 'Azerbaijan', 'Fiji', 'Holy See (Vatican City State)', 'Central African Republic']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "residence_code", "value_set": ['MZ', 'PT', 'ZA', 'NL', 'EG', 'CH', 'CN', 'US', 'IN', 'YE', 'UY', 'AF', 'KR', 'AU', 'ES', 'BH', 'LB', 'MU', 'TZ', 'KE', 'AW', 'AE', 'TR', 'AO', 'NG', 'ZM', 'RW', 'BR', 'ZW', 'MA', 'MR', 'IT', 'NZ', 'MT', 'OM', 'JP', 'CL', 'SZ', 'SA', 'FR', 'LU', 'HR', 'PL', 'GR', 'KG', 'ST', 'TN', 'IR', 'IE', 'GB', 'MW', 'VN', 'JO', 'FI', 'SE', 'PK', 'LV', 'BE', 'CV', 'CU', 'PA', 'MX', 'CO', 'DE', 'AT', 'BW', 'ID', 'MG', 'CA', 'IQ', 'HK', 'KM', 'CM', 'NO', 'CD', 'SG', 'RO', 'RS', 'GH', 'PY', 'PH', 'TW', 'LS', 'MY', 'BM', 'CZ', 'MC', 'AR', 'DK', 'PE', 'XE', 'SI', 'AG', 'TH', 'UG', 'RE', 'GE', 'GM', 'CI', 'KZ', 'CY', 'GA', 'GN', 'MO', 'KP', 'TC', 'IL', 'MN', 'BS', 'UA', 'RU', 'MP', 'HU', 'LR', 'EE', 'AM', 'CR', 'BD', 'SO', 'AD', 'SN', 'SK', 'LC', 'AS', 'BB', 'LT', 'BI', 'LK', 'ML', 'ET', 'EU', 'ER']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "residence_status", "value_set": ['HOME.OWNER', 'OTHER', 'TENANT', 'LIVING.WTH.PARENTS', 'SQUATTER']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "residence_type", "value_set": ['RESIDENTIAL.APT', 'INDEPEDENT.HOUSE', 'FARM.HOUSE', 'SERVICED.APT']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
                 kwargs={"column": "seg_group", "value_set": ['Company', 'Personal']},
             )
         ) 
+       
         expectation_suite.add_expectation(
             ExpectationConfiguration(
                 expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "title", "value_set": ['MRS', 'MR', 'DR', 'DRS', 'MISS', 'MAST1', 'ENG', 'PHD', 'MAST']},
+                kwargs={"column": "a_m_l_risk_rating", "value_set": ['Elevado', 'Medio', 'Baixo', '0']},
             )
         ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "cust_type1", "value_set": ['RETAIL', 'CORPORATE', 'PROSPECT']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "habliter", "value_set": ['Ate12 ano', 'Curso Superior', 'Bacharelato', 'Doutoramento', 'Mestrado', 'S.Estudos', 'Ensino Primario']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "province", "value_set": ['NAMPULA', 'CIDADE DE MAPUTO', 'MAPUTO', 'SOFALA', 'TETE', 'CABO DELGADO', 'NOT APPLICABLE', 'MANICA', 'ZAMBEZIA', 'NIASSA', 'INHAMBANE', 'GAZA']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "legal_doc_name1_id_description", "value_set": ['Licenca/Alvara', 'DIRE', 'Certidao da Conservatoria de Regist', 'Licenca / Alvara para o exercicio d', 'BI', 'Certidao de reserva de nome', 'Passaporte', 'Others (specify on free text field)', 'Certidao de Registo Comercial (Caso', 'Acta(s) da Assembleia Geral dos Acc', 'Escritura Publica da constituicao d', 'Certidao de Registo / Ministerio da', 'NUIT- Numero Unico de Identificacao', 'Cedula Pessoal', 'Recibo de pedido de BI', 'Cartao de identificacao de refugiad', 'NUIT-Numero Unico de Identificac', 'Carta de conducao', 'BR com o Pacto Social / Estatutos d', 'Termo de Autorizacao do Ministerio"', 'Certidao narrativa completa de nasc', 'Certidao da sentenca do Tribunal de', 'Numero de Registo Fiscal ( Modelo 4', 'Cartao de recenseamento eleitoral', 'Prova de Residencia', 'Prova documental de nao residente', 'Cartao de agricultor/trabalhador ab', 'Cartao de INSS', 'Documento de Transitario', 'Declaracao Comprovativa / Ministeri', 'Cedula militar', 'Documento de Regime Especial', 'Contrato de Trabalho', 'Documento de Embaixada', 'Procuracoes (especificar)', 'Documento de Staff Embaixada', 'Acta(s) da reuniao dos socios (pode', 'Documeto de Exportador']},
-            )
-        ) 
-        expectation_suite.add_expectation(
-            ExpectationConfiguration(
-                expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "a_m_l_risk_rating", "value_set": ['Elevado', 'Medio', 'Baixo']},
-            )
-        ) 
-        for i in ['placebrth', 'ocupation_desc', 'town_country', 'district', 'legal_iss_auth']:
-            expectation_suite.add_expectation(
-                ExpectationConfiguration(
-                    expectation_type="expect_column_values_to_be_of_type",
-                    kwargs={"column": i, "type_": "object"},
-                )
-            )
         expectation_suite.add_expectation(
             ExpectationConfiguration(
                 expectation_type="expect_column_distinct_values_to_be_in_set",
                 kwargs={"column": "payment_frequency", "value_set": ['Monthly', 'Single', 'Quarterly']},
             )
         ) 
-
         expectation_suite.add_expectation(
                     ExpectationConfiguration(
                         expectation_type="expect_column_distinct_values_to_be_in_set",
@@ -263,7 +179,6 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
                     )
                 ) 
     return expectation_suite
-
 
 import hopsworks
 
@@ -338,6 +253,49 @@ def to_feature_store(
 
     return object_feature_group
 
+def get_validation_results(checkpoint_result):
+    # validation_result is a dictionary containing one key-value pair
+    validation_result_key, validation_result_data = next(iter(checkpoint_result["run_results"].items()))
+
+    # Accessing the 'actions_results' from the validation_result_data
+    validation_result_ = validation_result_data.get('validation_result', {})
+
+    # Accessing the 'results' from the validation_result_data
+    results = validation_result_["results"]
+    meta = validation_result_["meta"]
+    use_case = meta.get('expectation_suite_name')
+    
+    
+    df_validation = pd.DataFrame({},columns=["Success","Expectation Type","Column","Column Pair","Max Value",\
+                                       "Min Value","Element Count","Unexpected Count","Unexpected Percent","Value Set","Unexpected Value","Observed Value"])
+    
+    
+    for result in results:
+        # Process each result dictionary as needed
+        success = result.get('success', '')
+        expectation_type = result.get('expectation_config', {}).get('expectation_type', '')
+        column = result.get('expectation_config', {}).get('kwargs', {}).get('column', '')
+        column_A = result.get('expectation_config', {}).get('kwargs', {}).get('column_A', '')
+        column_B = result.get('expectation_config', {}).get('kwargs', {}).get('column_B', '')
+        value_set = result.get('expectation_config', {}).get('kwargs', {}).get('value_set', '')
+        max_value = result.get('expectation_config', {}).get('kwargs', {}).get('max_value', '')
+        min_value = result.get('expectation_config', {}).get('kwargs', {}).get('min_value', '')
+
+        element_count = result.get('result', {}).get('element_count', '')
+        unexpected_count = result.get('result', {}).get('unexpected_count', '')
+        unexpected_percent = result.get('result', {}).get('unexpected_percent', '')
+        observed_value = result.get('result', {}).get('observed_value', '')
+        if type(observed_value) is list:
+            #sometimes observed_vaue is not iterable
+            unexpected_value = [item for item in observed_value if item not in value_set]
+        else:
+            unexpected_value=[]
+        
+        df_validation = pd.concat([df_validation, pd.DataFrame.from_dict( [{"Success" :success,"Expectation Type" :expectation_type,"Column" : column,"Column Pair" : (column_A,column_B),"Max Value" :max_value,\
+                                           "Min Value" :min_value,"Element Count" :element_count,"Unexpected Count" :unexpected_count,"Unexpected Percent":unexpected_percent,\
+                                                  "Value Set" : value_set,"Unexpected Value" :unexpected_value ,"Observed Value" :observed_value}])], ignore_index=True)
+        
+    return df_validation
 
 def ingestion(
     df: pd.DataFrame,
@@ -357,100 +315,125 @@ def ingestion(
         validation_expectation_suite (ExpectationSuite): group of expectations to check data.
         SETTINGS (dict): Dictionary with the settings definitions to connect to the project.
         
-    Returns:
-       
-    
-    
+    Returns: report
     """
+    # get context
+    full_path = os.getcwd()
+    context = gx.get_context(context_root_dir = full_path.partition('src')[0] + '/gx')
 
+    # add datasource
+    datasource_name = "project_data_feature_engineered"
+    try:
+        datasource = context.sources.add_pandas(datasource_name)
+        logger.info("Data Source created.")
+    except:
+        logger.info("Data Source already exists.")
+        datasource = context.datasources[datasource_name]
+
+    # df = pd.merge(customers, features, left_on='NewId', right_on='CustomerId', how='right').drop(columns=['NewId', 'index'])
     logger.info(f"The dataset contains {len(df.columns)} columns.")
-    df.columns = [re.sub(r'(?<!^)(?=[A-Z])', '_', col).lower() for col in df.columns]
-    df.columns = df.columns.str.replace('.', '', regex=False)
-    logger.info(f"{df.columns}")
+    logger.info(df.columns)
 
-    def safe_parse1(val):
-        try:
-            if pd.isna(val):
-                return None
-            val_str = str(int(val))  # Convert float like 20250101.0 to '20250101'
-            return datetime.strptime(val_str, "%Y-%m-%d")#.strftime('%Y-%m-%d')
-        except ValueError:
-            return None
-
-    for c in ['customer_since', 'date_of_birth', 'birth_in_corp_date']:
-        df[c] = df[c].fillna('1970-01-01')
-        df[c] = df[c].apply(safe_parse1)
-
-    def safe_parse2(val):
-        try:
-            if pd.isna(val):
-                return None
-            val_str = str(int(val))  # Convert float like 20250101.0 to '20250101'
-            return datetime.strptime(val_str, "%Y%m%d")#.strftime('%Y-%m-%d')
-        except ValueError:
-            return None  # Or return None
-
-    for c in ['legal_iss_date', 'legal_exp_date']:
-        df[c] = df[c].str.split('ý').str[-1]
-        df[c] = df[c].fillna('19700101') 
-        df[c] = df[c].apply(safe_parse2)
-
-    df['legal_exp_date'] = df['legal_exp_date'].apply(lambda x: x.strftime('%Y-%m-%d') if pd.notnull(x) else None)
-
-    for c in ['no_of_dependents', 'segment_id', 'industry_id', 'legal_doc_name1_id']:
-        # Convert to Int64 (nullable int)
+    for c in ['CustomerId', 'Duration_Months', 'NumberOfInstallmentsToPay', 'HasDefault',
+    'run_date', 'Previous_Loan_Count', 'Previous_Loan_Defaults', 'Active_Loans_Count',
+    'Age', 'Is_Employed', 'Is_Married']:
         df[c] = df[c].fillna(-1)
         df[c] = df[c].astype('int')
 
-    numerical_features = df.select_dtypes('number').columns.tolist()
+    df.columns = [re.sub(r'(?<!^)(?=[A-Z])', '_', col).lower() for col in df.columns]
+    df.columns = df.columns.str.replace('.', '', regex=False)
+    df.columns = df.columns.str.replace('__', '_', regex=False)
+
+    target = ['has_default']
+    numerical_features = df.select_dtypes('number').drop(columns='has_default').columns.tolist()
     categorical_features = df.select_dtypes(include=['object']).columns.tolist()
-    categorical_features.remove('legal_exp_date')
-    datetime_features = ['customer_since', 'date_of_birth', 'birth_in_corp_date', 'legal_iss_date', 'legal_exp_date'] #df.select_dtypes(include=['datetime']).columns.tolist()
-    
+ 
     for c in categorical_features:
         df[c] = df[c].apply(lambda x: x if pd.notnull(x) else None)
 
+    validation_expectation_suite_target = build_expectation_suite("target_expectations","target")
     validation_expectation_suite_numerical = build_expectation_suite("numerical_expectations","numerical_features")
     validation_expectation_suite_categorical = build_expectation_suite("categorical_expectations","categorical_features")
-    validation_expectation_suite_datetime = build_expectation_suite("datetime_expectations","datetime_features")
+    # validation_expectation_suite_datetime = build_expectation_suite("datetime_expectations","datetime_features")
+
+    context.add_or_update_expectation_suite(expectation_suite=validation_expectation_suite_target)
+    context.add_or_update_expectation_suite(expectation_suite=validation_expectation_suite_numerical)
+    context.add_or_update_expectation_suite(expectation_suite=validation_expectation_suite_categorical)
+    # context.add_or_update_expectation_suite(expectation_suite=validation_expectation_suite_datetime)
 
     numerical_feature_descriptions =[]
     categorical_feature_descriptions =[]
-    datetime_feature_descriptions =[]
+    target_description =[]
     
+    df_target = df[target].reset_index()
     df_numeric = df[numerical_features].reset_index()
     df_categorical = df[categorical_features].reset_index()
-    df_datetime = df[datetime_features].reset_index()
+    # df_datetime = df[datetime_features].reset_index()
 
-    logger.info(f"Number of columns processed: {len(df_numeric.columns) + len(df_categorical.columns) + len(df_datetime.columns)} columns.")
+    logger.info(f"Number of columns processed: {len(df_numeric.columns) + len(df_categorical.columns) + len(df_target.columns)} columns.")
     logger.info(f"{categorical_features}")
 
+    def build_asset_and_checkpoint(asset_name, df_group, checkpoint_name, expectation_suite_name):
+        data_asset_name = asset_name
+        try:
+            data_asset = datasource.add_dataframe_asset(name=data_asset_name, dataframe=df_group)
+        except:
+            data_asset = datasource.get_asset(data_asset_name)
+
+        batch_request = data_asset.build_batch_request(dataframe=df_group)
+
+        checkpoint = gx.checkpoint.SimpleCheckpoint(
+            name=checkpoint_name,
+            data_context=context,
+            validations=[
+                {
+                    "batch_request": batch_request,
+                    "expectation_suite_name": expectation_suite_name,
+                },
+            ],
+        )
+        return checkpoint
+
+    checkpoint_target = build_asset_and_checkpoint('target', df_target, 'checkpoint_target', 'target_expectations').run()
+    checkpoint_num = build_asset_and_checkpoint('numerical_features', df_numeric, 'checkpoint_num', 'numerical_expectations').run()
+    checkpoint_cat = build_asset_and_checkpoint('categorical_features', df_categorical, 'checkpoint_cat', 'categorical_expectations').run()
+    # checkpoint_date = build_asset_and_checkpoint('date_features', df_datetime, 'checkpoint_date', 'datetime_expectations').run()
+
+    df_val1 = get_validation_results(checkpoint_target)
+    df_val2 = get_validation_results(checkpoint_num)
+    df_val3 = get_validation_results(checkpoint_cat)
+    # df_val4 = get_validation_results(checkpoint_date)
+    
+    df_validation = pd.concat([df_val1, df_val2, df_val3], ignore_index=True)
+    logger.info(df_validation[df_validation.Success == False])
+    logger.info("Data passed on the unit data tests")
+    logger.info(f'All raw data tests passed: {df_validation[df_validation.Success == False].empty}')
 
     if parameters["to_feature_store"]:
 
-        # object_fs_numerical_features = to_feature_store(
-        #     df_numeric,"numerical_features_project",
-        #     1,"Numerical Features",
-        #     numerical_feature_descriptions,
-        #     validation_expectation_suite_numerical,
-        #     credentials["feature_store"]
-        # )
-
-        # object_fs_categorical_features = to_feature_store(
-        #     df_categorical,"categorical_features_project",
-        #     1,"Categorical Features",
-        #     categorical_feature_descriptions,
-        #     validation_expectation_suite_categorical,
-        #     credentials["feature_store"]
-        # )
-
-        object_fs_datetime_features = to_feature_store(
-            df_datetime,"datetime_features_project",
-            1,"Datetime Features",
-            datetime_feature_descriptions,
-            validation_expectation_suite_datetime,
+        object_fs_numerical_features = to_feature_store(
+            df_numeric,"numerical_features_project",
+            1,"Numerical Features",
+            numerical_feature_descriptions,
+            validation_expectation_suite_numerical,
             credentials["feature_store"]
         )
 
-    return df
+        object_fs_categorical_features = to_feature_store(
+            df_categorical,"categorical_features_project",
+            1,"Categorical Features",
+            categorical_feature_descriptions,
+            validation_expectation_suite_categorical,
+            credentials["feature_store"]
+        )
+
+        object_fs_target = to_feature_store(
+            df_target,"target_project",
+            1,"Target",
+            target_description,
+            validation_expectation_suite_target,
+            credentials["feature_store"]
+        )
+
+    return df_validation
 

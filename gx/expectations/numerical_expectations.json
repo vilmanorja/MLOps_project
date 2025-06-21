@@ -5,7 +5,7 @@
     {
       "expectation_type": "expect_column_values_to_be_of_type",
       "kwargs": {
-        "column": "no_of_dependents",
+        "column": "customer_id",
         "type_": "int64"
       },
       "meta": {}
@@ -13,7 +13,7 @@
     {
       "expectation_type": "expect_column_values_to_be_of_type",
       "kwargs": {
-        "column": "segment_id",
+        "column": "duration_months",
         "type_": "int64"
       },
       "meta": {}
@@ -21,7 +21,7 @@
     {
       "expectation_type": "expect_column_values_to_be_of_type",
       "kwargs": {
-        "column": "industry_id",
+        "column": "number_of_installments_to_pay",
         "type_": "int64"
       },
       "meta": {}
@@ -29,7 +29,7 @@
     {
       "expectation_type": "expect_column_values_to_be_of_type",
       "kwargs": {
-        "column": "legal_doc_name1_id",
+        "column": "run_date",
         "type_": "int64"
       },
       "meta": {}
@@ -37,15 +37,235 @@
     {
       "expectation_type": "expect_column_values_to_be_of_type",
       "kwargs": {
-        "column": "new_id",
+        "column": "previous_loan_count",
         "type_": "int64"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "previous_loan_defaults",
+        "type_": "int64"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "active_loans_count",
+        "type_": "int64"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "age",
+        "type_": "int64"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "is_employed",
+        "type_": "int64"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "is_married",
+        "type_": "int64"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "customer_id",
+        "max_value": null,
+        "min_value": -1,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "duration_months",
+        "max_value": null,
+        "min_value": -1,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "number_of_installments_to_pay",
+        "max_value": null,
+        "min_value": -1,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "run_date",
+        "max_value": null,
+        "min_value": -1,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "previous_loan_count",
+        "max_value": null,
+        "min_value": -1,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "previous_loan_defaults",
+        "max_value": null,
+        "min_value": -1,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "active_loans_count",
+        "max_value": null,
+        "min_value": -1,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "age",
+        "max_value": 120,
+        "min_value": 0,
+        "strict_min": true
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "is_employed",
+        "max_value": null,
+        "min_value": -1,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "is_married",
+        "max_value": null,
+        "min_value": -1,
+        "strict_min": false
       },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_not_be_null",
       "kwargs": {
-        "column": "new_id"
+        "column": "customer_id"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "credit_amount",
+        "type_": "float64"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "avg_monthly_income",
+        "type_": "float64"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "income_stability",
+        "type_": "float64"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "avg_monthly_expenses",
+        "type_": "float64"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "expenses_stability",
+        "type_": "float64"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "avg_monthly_funds",
+        "type_": "float64"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "funds_stability",
+        "type_": "float64"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "previous_loans_avg_amount",
+        "type_": "float64"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "previous_loans_std",
+        "type_": "float64"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "active_loan_amount_total",
+        "type_": "float64"
       },
       "meta": {}
     },
@@ -60,60 +280,132 @@
     {
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
+        "column": "credit_amount",
+        "max_value": null,
+        "min_value": 0,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "avg_monthly_income",
+        "max_value": null,
+        "min_value": 0,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "income_stability",
+        "max_value": null,
+        "min_value": 0,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "avg_monthly_expenses",
+        "max_value": null,
+        "min_value": 0,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "expenses_stability",
+        "max_value": null,
+        "min_value": 0,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "avg_monthly_funds",
+        "max_value": null,
+        "min_value": 0,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "funds_stability",
+        "max_value": null,
+        "min_value": 0,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "previous_loans_avg_amount",
+        "max_value": null,
+        "min_value": 0,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "previous_loans_std",
+        "max_value": null,
+        "min_value": 0,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "active_loan_amount_total",
+        "max_value": null,
+        "min_value": 0,
+        "strict_min": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
         "column": "yr_net_monthly_in",
         "max_value": null,
-        "min_value": -1,
+        "min_value": 0,
         "strict_min": false
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "expectation_type": "expect_column_values_to_be_in_set",
       "kwargs": {
-        "column": "no_of_dependents",
-        "max_value": null,
-        "min_value": -1,
-        "strict_min": false
+        "column": "is_employed",
+        "value_set": [
+          0,
+          1
+        ]
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "expectation_type": "expect_column_values_to_be_in_set",
       "kwargs": {
-        "column": "segment_id",
-        "max_value": null,
-        "min_value": -1,
-        "strict_min": false
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_between",
-      "kwargs": {
-        "column": "industry_id",
-        "max_value": null,
-        "min_value": -1,
-        "strict_min": false
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_between",
-      "kwargs": {
-        "column": "legal_doc_name1_id",
-        "max_value": null,
-        "min_value": -1,
-        "strict_min": false
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_between",
-      "kwargs": {
-        "column": "new_id",
-        "max_value": null,
-        "min_value": -1,
-        "strict_min": false
+        "column": "is_married",
+        "value_set": [
+          0,
+          1
+        ]
       },
       "meta": {}
     }
