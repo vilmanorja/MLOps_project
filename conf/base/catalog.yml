@@ -136,10 +136,12 @@ customer_features:
     lineterminator: "\n"
 
 
-
-
-
+# 08
 reporting_tests_raw:
   type: pandas.CSVDataset
   filepath: data/08_reporting/data_tests_raw.csv
+
+  reporting_tests:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/data_tests.csv
 
