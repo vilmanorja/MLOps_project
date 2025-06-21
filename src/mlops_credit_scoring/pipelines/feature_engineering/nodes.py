@@ -130,7 +130,8 @@ def extract_loans_features(loans: pd.DataFrame) -> pd.DataFrame:
     loans["CreditEOMStartDate"] = pd.to_datetime(loans["CreditEOMStartDate"])
     loans["CreditEOMEndDate"] = pd.to_datetime(loans["CreditEOMEndDate"])
 
-    filtered = loans[loans["CreditType"] != "Unarranged Overdraft"].copy()
+    #filtered = loans[loans["CreditType"] != "Unarranged Overdraft"].copy()
+    filtered = loans.copy()
 
     filtered["Duration_Months"] = (
         (filtered["CreditEOMEndDate"].dt.year - filtered["CreditEOMStartDate"].dt.year) * 12 +

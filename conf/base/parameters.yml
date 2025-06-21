@@ -1,7 +1,11 @@
 run_date: 
+  - "20230630"
+  - "20230731"
   - "20240131"
   - "20240229"
   - "20240331"
+  - "20240430"
+  - "20240531"
 target_column: "y"
 to_feature_store: True
 test_fraction: 0.3
