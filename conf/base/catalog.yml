@@ -20,15 +20,15 @@ loans_raw_data:
 
 loans_hist_raw_data:
   type: pandas.CSVDataset
-  filepath: data/01_raw/Loans_Hist_to_20240331.csv
+  filepath: data/01_raw/Loans_Hist_to_20240531.csv
 
 funds_raw_data:
   type: pandas.CSVDataset
-  filepath: data/01_raw/Funds_Hist_to_20240331.csv
+  filepath: data/01_raw/Funds_Hist_to_20240531.csv
 
 transactions_raw_data:
   type: pandas.CSVDataset
-  filepath: data/01_raw/Transactions_to_20240331.csv
+  filepath: data/01_raw/Transactions_to_20240531.csv
 
 
 #02_intermediate: Ingested and Validated
@@ -182,3 +182,102 @@ reporting_tests_raw:
 reporting_tests:
   type: pandas.CSVDataset
   filepath: data/08_reporting/data_tests.csv
+
+
+#feature transform
+encoder_transform:
+  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
+  dataset:
+    type: pickle.PickleDataset
+    filepath: data/04_feature/encoder.pkl
+
+#05_model_input
+X_train:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/X_train.csv
+  save_args:
+    lineterminator: "\n"
+
+y_train:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/y_train.csv
+  save_args:
+    lineterminator: "\n"
+
+
+X_test:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/X_test.csv
+  save_args:
+    lineterminator: "\n"
+
+y_test:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/y_test.csv
+  save_args:
+    lineterminator: "\n"
+
+
+#X_train and X_test processed data
+X_train_processed:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/X_train_processed.csv
+  save_args:
+    lineterminator: "\n"
+
+X_test_processed:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/X_test_processed.csv
+  save_args:
+    lineterminator: "\n"
+
+# 06_models
+fitted_preprocessor:
+  type: pickle.PickleDataset
+  filepath: data/06_models/fitted_preprocessor.pkl
+#best columns??
+best_columns:
+  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
+  dataset:
+    type: pickle.PickleDataset
+    filepath: data/06_models/best_cols.pkl
+
+
+
+production_model:
+  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
+  dataset:
+    type: pickle.PickleDataset
+    filepath: data/06_models/champion_model.pkl
+
+champion_model:
+  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
+  dataset:
+    type: pickle.PickleDataset
+    filepath: data/06_models/champion_model.pkl
+
+production_model_metrics:
+  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
+  dataset:
+    type: json.JSONDataset
+    filepath: data/08_reporting/production_model_metrics.json
+
+
+production_columns:
+  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
+  dataset:
+    type: pickle.PickleDataset
+    filepath: data/06_models/production_cols.pkl
+
+
+output_plot:
+  type: kedro_mlflow.io.artifacts.MlflowArtifactDataset
+  dataset:
+    type: matplotlib.MatplotlibWriter
+    filepath: data/08_reporting/shap_plot.png
+
+features_with_predict:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/features_with_predict.csv
+  save_args:
+    lineterminator: "\n"

@@ -28,13 +28,13 @@ from mlops_credit_scoring.pipelines import (
     data_cleaning,
     data_unit_tests as data_tests,
     feature_engineering as feature_engineering,
-    preprocessing_train as preprocess_train,
-    split_train_pipeline as split_train,
+    feature_preprocessing_train ,
+    #split_train_pipeline as split_train,
     model_selection as model_selection_pipeline,
     model_train as model_train_pipeline,
     feature_selection as feature_selection_pipeline,
     split_data,
-    preprocessing_batch,
+    feature_preprocessing_test,
     model_predict
 
 )
@@ -51,12 +51,13 @@ def register_pipelines() -> Dict[str, Pipeline]:
     data_cleaning_pipeline = data_cleaning.create_pipeline()
     feature_engineering_pipeline = feature_engineering.create_pipeline()
     split_data_pipeline = split_data.create_pipeline()
-    preprocess_train_pipeline = preprocess_train.create_pipeline()
-    split_train_pipeline = split_train.create_pipeline()
+    preprocess_train_pipeline = feature_preprocessing_train.create_pipeline()
+    preprocess_test_pipeline = feature_preprocessing_test.create_pipeline()
+    #split_train_pipeline = split_train.create_pipeline()
     model_train = model_train_pipeline.create_pipeline()
     model_selection = model_selection_pipeline.create_pipeline()
     feature_selection = feature_selection_pipeline.create_pipeline()
-    preprocess_batch_pipeline = preprocessing_batch.create_pipeline()
+
     model_predict_pipeline = model_predict.create_pipeline()
 
     return {
@@ -66,14 +67,14 @@ def register_pipelines() -> Dict[str, Pipeline]:
         "data_unit_tests": data_unit_tests_pipeline,
         "split_data": split_data_pipeline,
         "feature_engineering":feature_engineering_pipeline,
-        "preprocess_train": preprocess_train_pipeline,
-        "split_train": split_train_pipeline,
+        "feature_preprocessing_train": preprocess_train_pipeline,
+        #"split_train": split_train_pipeline,
         "model_selection": model_selection,
         "model_train": model_train,
         "feature_selection":feature_selection,
-        "production_full_train_process" : preprocess_train_pipeline + split_train_pipeline + model_train,
-        "preprocess_batch": preprocess_batch_pipeline,
-        "inference" : model_predict_pipeline,
-        "production_full_prediction_process" : preprocess_batch_pipeline + model_predict_pipeline,
+        "production_full_train_process" : preprocess_train_pipeline +  split_data_pipeline + model_train,
+        "feature_preprocessing_test": preprocess_test_pipeline,
+        "model_predict" : model_predict_pipeline,
+        "production_full_prediction_process" : preprocess_test_pipeline + model_predict_pipeline,
   
     }

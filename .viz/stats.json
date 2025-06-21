@@ -1,1 +1,1 @@
-{"customer_features": {"rows": 3554, "columns": 26, "file_size": 538553}, "reporting_tests": {"rows": 52, "columns": 12, "file_size": 5119}}
+{"X_test_processed": {"rows": 1990, "columns": 40, "file_size": 724506}, "features_with_predict": {"rows": 1990, "columns": 41, "file_size": 698889}}

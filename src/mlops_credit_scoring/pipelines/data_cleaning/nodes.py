@@ -46,6 +46,7 @@ def clean_Loans_hist(loans_hist:pd.DataFrame) -> pd.DataFrame:
     loans_hist = loans_hist.dropna(subset=["CreditAmount"])
 
     # Fill NaN values in 'NumberOfInstallmentsToPay' with 0
+   
     loans_hist["NumberOfInstallmentsToPay"] = loans_hist["NumberOfInstallmentsToPay"].fillna(0)
     
     # # Case 1: Contract ended → set installments = 0
@@ -112,7 +113,14 @@ def clean_loans_partitioned(loans: Dict[str, Callable[[], pd.DataFrame]]) -> Dic
 
         # Fill missing values in 'NumberOfInstallmentsToPay' with 0
         if "NumberOfInstallmentsToPay" in df.columns:
-            df["NumberOfInstallmentsToPay"] = df["NumberOfInstallmentsToPay"].fillna(0)
+        # Remove "M", convert to numeric (coerce errors), fill NaNs, then convert to int
+            df["NumberOfInstallmentsToPay"] = (
+                df["NumberOfInstallmentsToPay"]
+                .astype(str)
+                .str.replace("M", "", regex=False)
+            )
+            df["NumberOfInstallmentsToPay"] = pd.to_numeric(df["NumberOfInstallmentsToPay"], errors="coerce")
+            df["NumberOfInstallmentsToPay"] = df["NumberOfInstallmentsToPay"].fillna(0).astype(int)
 
         # Save cleaned DataFrame
         cleaned[file_name] = df

@@ -6,10 +6,10 @@ run_date:
   - "20240331"
   - "20240430"
   - "20240531"
-target_column: "y"
+target_column: "HasDefault"
 to_feature_store: True
-test_fraction: 0.3
-random_state: 2021
+test_fraction: 0.2
+random_state: 42
 run_name: "full_project"
 use_feature_selection: False
 feature_selection: "rfe"
@@ -18,4 +18,5 @@ baseline_model_params:
   n_estimators: 100
   max_depth: 6
   max_features: 20
-  random_state: 2021
+  random_state: 42
+  class_weight: "balanced"

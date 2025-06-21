@@ -10,8 +10,11 @@ warnings.filterwarnings("ignore", category=Warning)
 
 
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV, cross_val_score
 from sklearn.metrics import accuracy_score
+from sklearn.linear_model import LogisticRegression
+from xgboost import XGBClassifier
+from sklearn.metrics import f1_score
 
 import mlflow
 
@@ -31,30 +34,19 @@ def model_selection(X_train: pd.DataFrame,
                     champion_dict: Dict[str, Any],
                     champion_model : pickle.Pickler,
                     parameters: Dict[str, Any]):
-    
-    
-    """Trains a model on the given data and saves it to the given model path.
-
-    Args:
-    --
-        X_train (pd.DataFrame): Training features.
-        X_test (pd.DataFrame): Test features.
-        y_train (pd.DataFrame): Training target.
-        y_test (pd.DataFrame): Test target.
-        parameters (dict): Parameters defined in parameters.yml.
-
-    Returns:
-    --
-        models (dict): Dictionary of trained models.
-        scores (pd.DataFrame): Dataframe of model scores.
-    """
-   
+    y_train = np.ravel(y_train)
+    neg, pos = np.bincount(y_train)
+    scale_pos_weight = neg / pos
     models_dict = {
+        'LogisticRegression': LogisticRegression(),
         'RandomForestClassifier': RandomForestClassifier(),
         'GradientBoostingClassifier': GradientBoostingClassifier(),
+        'XGBClassifier': XGBClassifier(use_label_encoder=False, eval_metric="logloss", random_state=42,scale_pos_weight=scale_pos_weight)
     }
 
+
     initial_results = {}   
+
 
     with open('conf/local/mlflow.yml') as f:
         experiment_name = yaml.load(f, Loader=yaml.loader.SafeLoader)['tracking']['experiment']['name']
@@ -62,37 +54,41 @@ def model_selection(X_train: pd.DataFrame,
         logger.info(experiment_id)
 
 
-    logger.info('Starting first step of model selection : Comparing between model types')
+        logger.info(' Step 1: Comparing models using 5-fold CV F1-score...')
 
     for model_name, model in models_dict.items():
         with mlflow.start_run(experiment_id=experiment_id,nested=True):
             mlflow.sklearn.autolog(log_model_signatures=True, log_input_examples=True)
-            y_train = np.ravel(y_train)
-            model.fit(X_train, y_train)
-            initial_results[model_name] = model.score(X_test, y_test)
+      
+            cv_scores = cross_val_score(model, X_train, y_train, cv=5, scoring='f1')
+            mean_f1 = np.mean(cv_scores)
+            initial_results[model_name] = mean_f1
+
             run_id = mlflow.last_active_run().info.run_id
+            logger.info(f" {model_name} mean CV F1-score: {mean_f1:.4f}")
             logger.info(f"Logged model : {model_name} in run {run_id}")
     
     best_model_name = max(initial_results, key=initial_results.get)
     best_model = models_dict[best_model_name]
 
     logger.info(f"Best model is {best_model_name} with score {initial_results[best_model_name]}")
-    logger.info('Starting second step of model selection : Hyperparameter tuning')
+    logger.info('Step 2: Hyperparameter tuning with 5-fold CV...')
 
     # Perform hyperparameter tuning with GridSearchCV
     param_grid = parameters['hyperparameters'][best_model_name]
     with mlflow.start_run(experiment_id=experiment_id,nested=True):
-        gridsearch = GridSearchCV(best_model, param_grid, cv=2, scoring='accuracy', n_jobs=-1)
+        gridsearch = GridSearchCV(best_model, param_grid, cv=5,  scoring='f1', n_jobs=-1)
         gridsearch.fit(X_train, y_train)
         best_model = gridsearch.best_estimator_
 
 
-    logger.info(f"Hypertunned model score: {gridsearch.best_score_}")
-    pred_score = accuracy_score(y_test, best_model.predict(X_test))
-
-    if champion_dict['test_score'] < pred_score:
-        logger.info(f"New champion model is {best_model_name} with score: {pred_score} vs {champion_dict['test_score']} ")
+    f1_test_score = f1_score(y_test, best_model.predict(X_test))
+    logger.info(f" Tuned {best_model_name} test F1-score: {f1_test_score:.4f}")
+    if champion_dict.get('test_f1', 0.0) < f1_test_score:
+        logger.info(f" New champion: {best_model_name} (F1: {f1_test_score:.4f}) > {champion_dict['test_f1']:.4f}")
+        champion_dict["regressor"] = best_model_name
+        champion_dict["test_f1"] = round(f1_test_score, 4)
         return best_model
     else:
-        logger.info(f"Champion model is still {champion_dict['regressor']} with score: {champion_dict['test_score']} vs {pred_score} ")
+        logger.info(f" Champion remains: {champion_dict['regressor']} (F1: {champion_dict['f1_test']:.4f})")
         return champion_model

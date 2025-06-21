@@ -9,7 +9,7 @@ import os
 import warnings
 warnings.filterwarnings("ignore", category=Warning)
 import mlflow
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, f1_score
 from sklearn.ensemble import RandomForestClassifier
 import shap
 import matplotlib.pyplot as plt
@@ -43,20 +43,24 @@ def model_train(X_train: pd.DataFrame,
     logger.info('Starting first step of model selection : Comparing between modes types')
     mlflow.sklearn.autolog(log_model_signatures=True, log_input_examples=True)
 
-    # open pickle file with regressors
+  # Load champion model or fallback to baseline
     try:
-        with open(os.path.join(os.getcwd(), 'data', '06_models', 'champion_model.pkl'), 'rb') as f:
+        with open("data/06_models/champion_model.pkl", "rb") as f:
             classifier = pickle.load(f)
-    except:
-        classifier = RandomForestClassifier(**parameters['baseline_model_params'])
+        logger.info("Loaded existing champion model.")
+    except Exception:
+        classifier = RandomForestClassifier(**parameters["baseline_model_params"])
+        logger.info("No champion found. Using baseline RandomForestClassifier.")
 
-    results_dict = {}
+    
+    if parameters["use_feature_selection"]:
+        logger.info(f"Using feature selection in model train...")
+        X_train = X_train[best_columns]
+        X_test = X_test[best_columns]
+    y_train = np.ravel(y_train)
+    
     with mlflow.start_run(experiment_id=experiment_id, nested=True):
-        if parameters["use_feature_selection"]:
-            logger.info(f"Using feature selection in model train...")
-            X_train = X_train[best_columns]
-            X_test = X_test[best_columns]
-        y_train = np.ravel(y_train)
+
         model = classifier.fit(X_train, y_train)
         # making predictions
         y_train_pred = model.predict(X_train)
@@ -64,26 +68,36 @@ def model_train(X_train: pd.DataFrame,
         # evaluating model
         acc_train = accuracy_score(y_train, y_train_pred)
         acc_test = accuracy_score(y_test, y_test_pred)
+        f1_train = f1_score(y_train, y_train_pred)
+        f1_test = f1_score(y_test, y_test_pred)
         # saving results in dict
-        results_dict['classifier'] = classifier.__class__.__name__
-        results_dict['train_score'] = acc_train
-        results_dict['test_score'] = acc_test
+        results_dict = {
+            "classifier": classifier.__class__.__name__,
+            "train_accuracy": round(acc_train, 4),
+            "test_accuracy": round(acc_test, 4),
+            "train_f1": round(f1_train, 4),
+            "test_f1": round(f1_test, 4),
+        }
+
         # logging in mlflow
         run_id = mlflow.last_active_run().info.run_id
         logger.info(f"Logged train model in run {run_id}")
         logger.info(f"Accuracy is {acc_test}")
+        logger.info(f"F1-Score is {f1_test}")
 
 
-
-    explainer = shap.TreeExplainer(model)
-    shap_values = explainer(X_train)
-
+    try:
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer(X_train)
+        shap.initjs()
+        # calculate shap values. This is what we will plot.
+        # shap_values[:,:,1] -> since it is a classification problem, I will use SHAP for explaining the outcome of class 1.
+        # you can do the same for the class 0 just by using shap_values[:,:,0]
+        shap.summary_plot(shap_values[:,:,1], X_train,feature_names=X_train.columns, show=False)
     
-
-    shap.initjs()
-    # calculate shap values. This is what we will plot.
-    # shap_values[:,:,1] -> since it is a classification problem, I will use SHAP for explaining the outcome of class 1.
-    # you can do the same for the class 0 just by using shap_values[:,:,0]
-    shap.summary_plot(shap_values[:,:,1], X_train,feature_names=X_train.columns, show=False)
-
+    except Exception as e:
+        logger.warning(f" SHAP failed: {e}")
+        plt.figure()
+        plt.text(0.5, 0.5, "SHAP unavailable", ha="center")
+   
     return model, X_train.columns , results_dict,plt
