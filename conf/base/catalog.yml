@@ -71,6 +71,8 @@ transactions_validated:
 customers_cleaned:
   type: pandas.CSVDataset
   filepath: data/02_intermediate/customers_cleaned.csv
+  load_args:
+    encoding: ISO-8859-1
   save_args:
     index: False
     lineterminator: "\n"
