@@ -90,13 +90,12 @@ def model_train(X_train: pd.DataFrame,
         logger.info(f"F1-Score is {f1_test}")
         logger.info(f"Recall is {recall_test}")
         
-        #logging the model
+        #logging the model and registering the model
         mlflow.sklearn.log_model(
             model,
             artifact_path="model",
             registered_model_name="loan_default_model"
         )
-       
         model_uri = f"runs:/{run_id}/model"
         result = mlflow.register_model(model_uri, "loan_default_model")
 
