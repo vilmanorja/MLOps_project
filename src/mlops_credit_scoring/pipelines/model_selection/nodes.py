@@ -86,9 +86,9 @@ def model_selection(X_train: pd.DataFrame,
     logger.info(f" Tuned {best_model_name} test F1-score: {f1_test_score:.4f}")
     if champion_dict.get('test_f1', 0.0) < f1_test_score:
         logger.info(f" New champion: {best_model_name} (F1: {f1_test_score:.4f}) > {champion_dict['test_f1']:.4f}")
-        champion_dict["regressor"] = best_model_name
+        champion_dict["classifier"] = best_model_name
         champion_dict["test_f1"] = round(f1_test_score, 4)
         return best_model
     else:
-        logger.info(f" Champion remains: {champion_dict['regressor']} (F1: {champion_dict['f1_test']:.4f})")
+        logger.info(f" Champion remains: {champion_dict['classifier']} (F1: {champion_dict['f1_test']:.4f})")
         return champion_model

@@ -9,7 +9,7 @@ import os
 import warnings
 warnings.filterwarnings("ignore", category=Warning)
 import mlflow
-from sklearn.metrics import accuracy_score, f1_score
+from sklearn.metrics import accuracy_score, f1_score,recall_score
 from sklearn.ensemble import RandomForestClassifier
 import shap
 import matplotlib.pyplot as plt
@@ -70,6 +70,8 @@ def model_train(X_train: pd.DataFrame,
         acc_test = accuracy_score(y_test, y_test_pred)
         f1_train = f1_score(y_train, y_train_pred)
         f1_test = f1_score(y_test, y_test_pred)
+        recall_train = recall_score(y_train, y_train_pred)
+        recall_test = recall_score(y_test, y_test_pred)
         # saving results in dict
         results_dict = {
             "classifier": classifier.__class__.__name__,
@@ -77,6 +79,8 @@ def model_train(X_train: pd.DataFrame,
             "test_accuracy": round(acc_test, 4),
             "train_f1": round(f1_train, 4),
             "test_f1": round(f1_test, 4),
+            "train_recall": round(recall_train, 4),
+            "test_recall": round(recall_test, 4),
         }
 
         # logging in mlflow
@@ -84,6 +88,7 @@ def model_train(X_train: pd.DataFrame,
         logger.info(f"Logged train model in run {run_id}")
         logger.info(f"Accuracy is {acc_test}")
         logger.info(f"F1-Score is {f1_test}")
+        logger.info(f"Recall is {recall_test}")
 
 
     try:

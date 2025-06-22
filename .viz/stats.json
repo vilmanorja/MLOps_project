@@ -1,1 +1,1 @@
-{"X_test_processed": {"rows": 1990, "columns": 40, "file_size": 724506}, "features_with_predict": {"rows": 1990, "columns": 41, "file_size": 698889}}
+{"loans_hist_cleaned": {"rows": 197459, "columns": 14, "file_size": 21598879}, "funds_cleaned": {"rows": 724393, "columns": 4, "file_size": 25836824}, "transactions_cleaned": {"rows": 6743138, "columns": 10, "file_size": 418709087}, "customers_cleaned": {"rows": 122205, "columns": 33, "file_size": 30457102}, "customer_features": {"rows": 4889, "columns": 26, "file_size": 1066159}}

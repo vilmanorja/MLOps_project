@@ -12,7 +12,7 @@ from sklearn.feature_selection import RFE
 import os
 import pickle
 
-def extract_transactions_features(transactions: pd.DataFrame, run_date:str) -> pd.DataFrame:
+def extract_transactions_features_old(transactions: pd.DataFrame, run_date:str) -> pd.DataFrame:
     loans_reference_date = pd.to_datetime(run_date, format="%Y%m%d")
     #loans_reference_date = pd.to_datetime(loans_reference_date)
     end_date = loans_reference_date - pd.DateOffset(months=1)
@@ -39,6 +39,64 @@ def extract_transactions_features(transactions: pd.DataFrame, run_date:str) -> p
     summary = pd.merge(avg_income, avg_expenses, on="CustomerId", how="outer").fillna(0)
     return summary
 
+def extract_transactions_features(transactions: pd.DataFrame, run_date: str) -> pd.DataFrame:
+    loans_reference_date = pd.to_datetime(run_date, format="%Y%m%d")
+    end_date = loans_reference_date - pd.DateOffset(months=1)
+    start_date = end_date - pd.DateOffset(years=1) + pd.DateOffset(days=1)
+
+    transactions["Date"] = pd.to_datetime(transactions["Date"])
+    transactions = transactions[(transactions["Date"] >= start_date) & (transactions["Date"] <= end_date)].copy()
+
+    transactions["CustomerIdCreditNew"] = transactions["CustomerIdCreditNew"].fillna(0).astype(int)
+    transactions["CustomerIdDebitNew"] = transactions["CustomerIdDebitNew"].fillna(0).astype(int)
+    transactions = transactions[~((transactions.CustomerIdCreditNew == 0) & (transactions.CustomerIdDebitNew == 0))]
+
+    transactions['Month'] = transactions["Date"].dt.to_period('M')
+
+    credited = (
+        transactions[['Month', 'CustomerIdCreditNew', 'AmountMZN']]
+        .groupby(['Month', 'CustomerIdCreditNew'])
+        .sum(numeric_only=True)
+        .reset_index()
+        .rename(columns={'AmountMZN': 'Monthly_Income', 'CustomerIdCreditNew': 'CustomerId'})
+    )
+    debited = (
+        transactions[['Month', 'CustomerIdDebitNew', 'AmountMZN']]
+        .groupby(['Month', 'CustomerIdDebitNew'])
+        .sum(numeric_only=True)
+        .reset_index()
+        .rename(columns={'AmountMZN': 'Monthly_Expenses', 'CustomerIdDebitNew': 'CustomerId'})
+    )
+
+    credited = credited[credited["CustomerId"] != 0]
+    debited = debited[debited["CustomerId"] != 0]
+
+    # Ensure full 12-month coverage
+    all_months = pd.period_range(start=start_date, end=end_date, freq='M')
+    all_customers = pd.concat([credited["CustomerId"], debited["CustomerId"]]).unique()
+
+    idx = pd.MultiIndex.from_product([all_months, all_customers], names=["Month", "CustomerId"])
+
+    credited = credited.set_index(["Month", "CustomerId"]).reindex(idx, fill_value=0).reset_index()
+    debited = debited.set_index(["Month", "CustomerId"]).reindex(idx, fill_value=0).reset_index()
+
+    avg_income = (
+        credited.groupby("CustomerId")
+        .agg(Avg_Monthly_Income=('Monthly_Income', 'mean'),
+             Income_Stability=('Monthly_Income', 'std'))
+        .reset_index()
+    )
+    avg_expenses = (
+        debited.groupby("CustomerId")
+        .agg(Avg_Monthly_expenses=('Monthly_Expenses', 'mean'),
+             Expenses_Stability=('Monthly_Expenses', 'std'))
+        .reset_index()
+    )
+
+    summary = pd.merge(avg_income, avg_expenses, on="CustomerId", how="outer").fillna(0)
+    return summary
+
+
 def extract_transactions_features_batch(transactions: pd.DataFrame, run_date:list[str]) -> dict:
     result = {}
     for ref_date in run_date:
@@ -49,7 +107,7 @@ def extract_transactions_features_batch(transactions: pd.DataFrame, run_date:lis
 
     return  result
 
-def extract_funds_features(funds: pd.DataFrame, run_date:str) -> pd.DataFrame:
+def extract_funds_features_old(funds: pd.DataFrame, run_date:str) -> pd.DataFrame:
     #loans_reference_date = pd.to_datetime('2024-01-31')
     loans_reference_date = pd.to_datetime(run_date, format="%Y%m%d")
     end_date = loans_reference_date - pd.DateOffset(months=1)
@@ -64,6 +122,37 @@ def extract_funds_features(funds: pd.DataFrame, run_date:str) -> pd.DataFrame:
     ).reset_index()
 
     return summary
+
+def extract_funds_features(funds: pd.DataFrame, run_date: str) -> pd.DataFrame:
+    loans_reference_date = pd.to_datetime(run_date, format="%Y%m%d")
+    end_date = loans_reference_date - pd.DateOffset(months=1)
+    start_date = end_date - pd.DateOffset(years=1) + pd.DateOffset(days=1)
+
+    funds["Date"] = pd.to_datetime(funds["Date"])
+    funds = funds[(funds["Date"] >= start_date) & (funds["Date"] <= end_date)].copy()
+
+    # Add month granularity
+    funds["Month"] = funds["Date"].dt.to_period('M')
+    funds_monthly = (
+        funds.groupby(["Month", "CustomerId"])
+        .agg(FundsBalance=('FundsBalance', 'mean'))  # or 'last' depending on what you want
+        .reset_index()
+    )
+
+    all_months = pd.period_range(start=start_date, end=end_date, freq='M')
+    all_customers = funds_monthly["CustomerId"].unique()
+    idx = pd.MultiIndex.from_product([all_months, all_customers], names=["Month", "CustomerId"])
+
+    funds_monthly = funds_monthly.set_index(["Month", "CustomerId"]).reindex(idx, fill_value=0).reset_index()
+
+    summary = (
+        funds_monthly.groupby("CustomerId")
+        .agg(Avg_Monthly_Funds=("FundsBalance", "mean"),
+             Funds_Stability=("FundsBalance", "std"))
+        .reset_index()
+    )
+    return summary
+
 
 def extract_funds_features_batch(funds: pd.DataFrame, run_date: list[str]) -> dict:
     result = {}
