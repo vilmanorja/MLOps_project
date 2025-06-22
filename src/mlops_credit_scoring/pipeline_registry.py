@@ -72,7 +72,18 @@ def register_pipelines() -> Dict[str, Pipeline]:
         "model_selection": model_selection,
         "model_train": model_train,
         "feature_selection":feature_selection,
-        "production_full_train_process" : preprocess_train_pipeline +  split_data_pipeline + model_train,
+        "production_full_train_process" : (raw_data_tests_pipeline
+                                           +data_cleaning_pipeline
+                                           +feature_engineering_pipeline
+                                           +split_data_pipeline 
+                                           +preprocess_train_pipeline
+                                             + model_train),
+        "production_full_model_selection_process":(raw_data_tests_pipeline
+                                           +data_cleaning_pipeline
+                                           +feature_engineering_pipeline
+                                           +split_data_pipeline 
+                                           +preprocess_train_pipeline
+                                             + model_selection),
         "feature_preprocessing_test": preprocess_test_pipeline,
         "model_predict" : model_predict_pipeline,
         "production_full_prediction_process" : preprocess_test_pipeline + model_predict_pipeline,
