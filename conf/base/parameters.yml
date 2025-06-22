@@ -1,15 +1,14 @@
 run_date: 
   - "20240131"
   - "20240229"
-  - "20240331"
-  - "20240430"
-  - "20240531"
+
 target_column: "HasDefault"
 to_feature_store: True
 test_fraction: 0.2
 random_state: 42
 run_name: "full_project"
-use_feature_selection: False
+use_feature_selection: True
+#num_of_Importances___
 feature_selection: "rfe"
 model_name: "bank"
 baseline_model_params:

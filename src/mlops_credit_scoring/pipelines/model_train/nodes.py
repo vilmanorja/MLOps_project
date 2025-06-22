@@ -94,11 +94,14 @@ def model_train(X_train: pd.DataFrame,
     try:
         explainer = shap.TreeExplainer(model)
         shap_values = explainer(X_train)
+        print("SHAP values shape:", np.array(shap_values).shape)
         shap.initjs()
         # calculate shap values. This is what we will plot.
         # shap_values[:,:,1] -> since it is a classification problem, I will use SHAP for explaining the outcome of class 1.
         # you can do the same for the class 0 just by using shap_values[:,:,0]
-        shap.summary_plot(shap_values[:,:,1], X_train,feature_names=X_train.columns, show=False)
+        
+        shap.summary_plot(shap_values, X_train, feature_names=X_train.columns, show=False)
+        #shap.summary_plot(shap_values[:,:,1], X_train,feature_names=X_train.columns, show=False)
     
     except Exception as e:
         logger.warning(f" SHAP failed: {e}")

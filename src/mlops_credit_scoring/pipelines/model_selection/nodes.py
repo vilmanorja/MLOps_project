@@ -33,7 +33,13 @@ def model_selection(X_train: pd.DataFrame,
                     y_test: pd.DataFrame,
                     champion_dict: Dict[str, Any],
                     champion_model : pickle.Pickler,
-                    parameters: Dict[str, Any]):
+                    parameters: Dict[str, Any], best_columns):
+    
+    if parameters["use_feature_selection"]:
+        logger.info(f"Using feature selection in model train...")
+        X_train = X_train[best_columns]
+        X_test = X_test[best_columns]
+    y_train = np.ravel(y_train)
     y_train = np.ravel(y_train)
     neg, pos = np.bincount(y_train)
     scale_pos_weight = neg / pos
@@ -90,5 +96,5 @@ def model_selection(X_train: pd.DataFrame,
         champion_dict["test_f1"] = round(f1_test_score, 4)
         return best_model
     else:
-        logger.info(f" Champion remains: {champion_dict['classifier']} (F1: {champion_dict['f1_test']:.4f})")
+        logger.info(f" Champion remains: {champion_dict['classifier']} (F1: {champion_dict['test_f1']:.4f})")
         return champion_model
