@@ -51,7 +51,7 @@ def feature_selection(
 ) -> Tuple[pd.DataFrame, List[str]]:
     y_train = np.ravel(y_train)
 
-    X_train= X_train.drop(columns=["num__CustomerId"])
+    #X_train= X_train.drop(columns=["num__CustomerId"])
 
     # SelectKBest
     selector_kbest = SelectKBest(score_func=f_classif, k=15)
@@ -110,7 +110,7 @@ def feature_selection(
 
     final_features = [f for f in features_2_of_3 if f not in features_to_drop]
 
-    final_features.append('num__CustomerId')
+    #final_features.append('num__CustomerId')
     
     print('-------------------------')
     print(f"Selected features: {final_features}")

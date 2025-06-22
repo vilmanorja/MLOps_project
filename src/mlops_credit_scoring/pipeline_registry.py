@@ -76,12 +76,14 @@ def register_pipelines() -> Dict[str, Pipeline]:
                                            +data_cleaning_pipeline
                                            +feature_engineering_pipeline
                                            +split_data_pipeline 
+                                           +feature_selection
                                            +preprocess_train_pipeline
                                              + model_train),
         "production_full_model_selection_process":(raw_data_tests_pipeline
                                            +data_cleaning_pipeline
                                            +feature_engineering_pipeline
                                            +split_data_pipeline 
+                                           +feature_selection
                                            +preprocess_train_pipeline
                                              + model_selection),
         "feature_preprocessing_test": preprocess_test_pipeline,

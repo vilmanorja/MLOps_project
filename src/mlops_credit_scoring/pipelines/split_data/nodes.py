@@ -33,6 +33,8 @@ def split_data(
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=parameters["test_fraction"], random_state=parameters["random_state"])
 
-    return X_train, X_test, y_train, y_test, X_train.columns
+    return X_train, X_test, y_train, y_test
+
+    #return X_train, X_test, y_train, y_test, X_train.columns
 
 
