@@ -217,6 +217,30 @@ y_test:
   save_args:
     lineterminator: "\n"
 
+X_train_cleaned:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/X_train_cleaned.csv
+  save_args:
+    lineterminator: "\n"
+
+y_train_cleaned:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/y_train_cleaned.csv
+  save_args:
+    lineterminator: "\n"
+
+X_test_cleaned:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/X_test_cleaned.csv
+  save_args:
+    lineterminator: "\n"
+
+y_test_cleaned:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/y_test_cleaned.csv
+  save_args:
+    lineterminator: "\n"
+
 
 #X_train and X_test processed data
 X_train_processed:

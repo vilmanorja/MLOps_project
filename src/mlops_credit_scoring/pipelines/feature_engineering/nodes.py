@@ -37,6 +37,7 @@ def extract_transactions_features(transactions: pd.DataFrame, run_date:str) -> p
     avg_expenses = debited.groupby("CustomerId").agg(Avg_Monthly_expenses=('Monthly_Expenses','mean'), Expenses_Stability=('Monthly_Expenses','std')).reset_index()
 
     summary = pd.merge(avg_income, avg_expenses, on="CustomerId", how="outer").fillna(0)
+
     return summary
 
 def extract_transactions_features_batch(transactions: pd.DataFrame, run_date:list[str]) -> dict:
@@ -94,6 +95,7 @@ def extract_previous_loans_features(loans_hist: pd.DataFrame, run_date :str) -> 
     ).reset_index().rename(columns={"CustomerNewId": "CustomerId"})
 
     summary = pd.merge(prev_loans, prev_defaults, on="CustomerId", how="outer").fillna(0)
+
     return summary
 
 def extract_previous_loans_features_batch(loans_hist: pd.DataFrame, run_date: list[str]) -> dict:
@@ -167,8 +169,8 @@ def extract_customer_demographics_features(customers: pd.DataFrame, customer_ids
     filtered_customers["BirthInCorpDate"] = pd.to_datetime(filtered_customers["BirthInCorpDate"], errors="coerce")
     filtered_customers["DateOfBirthFilled"] = filtered_customers["DateOfBirth"].fillna(filtered_customers["BirthInCorpDate"])
 
-    filtered_customers["Age"] = ((ref_date - filtered_customers["DateOfBirthFilled"]).dt.days // 365).fillna(0).astype(int)
-
+    filtered_customers["Age"] = ((ref_date - filtered_customers["DateOfBirthFilled"]).dt.days // 365)
+    
     employed_values = ["EMPLOYED", "SELF-EMPLOYED", "TPE", "MB", "LP"]
     filtered_customers["Is_Employed"] = filtered_customers["EmploymentStatus"].isin(employed_values).astype(int)
     filtered_customers["Is_Married"] = filtered_customers["MaritalStatus"].isin(["MARRIED", "PARTNER"]).astype(int)
@@ -218,13 +220,14 @@ def merge_features_with_target_loans(
 ) -> pd.DataFrame:
     df = loans_to_predict.copy()
 
-    df = df.merge(transactional_summary, on=["CustomerId", "run_date"], how="left")
+    df = df.merge(transactional_summary, on=["CustomerId", "run_date"], how="left")   
     df = df.merge(funds_summary, on=["CustomerId", "run_date"], how="left")
     df = df.merge(previous_loans_summary, on=["CustomerId", "run_date"], how="left")
     df = df.merge(active_loans_summary, on=["CustomerId", "run_date"], how="left")
     df = df.merge(customer_demographics, on=["CustomerId", "run_date"], how="left")
 
     return df.fillna(0)
+    
 
 
 def merge_features_with_target_loans_batch(
