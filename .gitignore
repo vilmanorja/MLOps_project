@@ -163,3 +163,4 @@ mlruns/*
 
 project_local
 .DS_Store
+tests/pipelines/sample/sample_transactions.csv
