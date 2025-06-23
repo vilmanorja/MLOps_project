@@ -35,6 +35,7 @@ from sklearn.preprocessing import OneHotEncoder , LabelEncoder
 
 # Some function for cleaning customer final  features
 def clean_customer_features(X_test: pd.DataFrame, y_test: pd.DataFrame) -> pd.DataFrame:
+    X_test= X_test.drop(columns="run_date", axis=1)
     X_test_cleaned = X_test.drop_duplicates(keep='first')
     y_test_cleaned = y_test.loc[X_test_cleaned.index]
 

@@ -36,6 +36,8 @@ from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
 
 # Some function for cleaning customer final  features
 def clean_customer_features_train(X_train: pd.DataFrame, y_train: pd.DataFrame) -> pd.DataFrame:
+    X_train= X_train.drop(columns="run_date", axis=1)
+
     X_train_cleaned = X_train.drop_duplicates(keep='first')
     y_train_cleaned = y_train.loc[X_train_cleaned.index]
 
@@ -56,6 +58,7 @@ def clean_customer_features_train(X_train: pd.DataFrame, y_train: pd.DataFrame) 
     'Active_Loan_Amount_Total': 1.5e8,
     'YrNetMonthlyIn':1.5e7    
     }
+
 
     #Removing outliers
     for column, upper_limit in limits.items():

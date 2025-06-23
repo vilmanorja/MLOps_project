@@ -1,1 +1,1 @@
-{"customer_features": {"rows": 3554, "columns": 26, "file_size": 538553}, "X_train": {"rows": 2843, "columns": 24, "file_size": 372977}, "X_test": {"rows": 711, "columns": 24, "file_size": 93483}}
+{"customers_raw_data": {"rows": 122212, "columns": 32, "file_size": 32432321}, "ingested_data": {"rows": 122212, "columns": 32, "file_size": 26681528}}
