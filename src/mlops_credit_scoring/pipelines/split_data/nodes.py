@@ -29,7 +29,7 @@ def split_data(
     y = data[parameters["target_column"]]
     X = data.drop(columns=parameters["target_column"], axis=1)
     X = X.drop(columns="CustomerId", axis=1)
-    X = X.drop(columns="run_date", axis=1)
+    #X = X.drop(columns="run_date", axis=1)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=parameters["test_fraction"], random_state=parameters["random_state"])
 
