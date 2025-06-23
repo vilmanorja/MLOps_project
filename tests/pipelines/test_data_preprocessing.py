@@ -20,8 +20,8 @@ full_path = os.getcwd()
 sys.path.append(full_path + '/Project/MLOps_project/src')
 # sys.path.append('/Users/vilmanorja/Library/CloudStorage/OneDrive-AaltoUniversity/Yliopisto/Maisterikurssit/Exchange courses/MLOps/Project/MLOps_project/src')
 
-from mlops_credit_scoring.pipelines.data_cleaning.nodes import clean_Transactions
-from mlops_credit_scoring.pipelines.feature_engineering.nodes import extract_transactions_features_batch
+from src.mlops_credit_scoring.pipelines.data_cleaning.nodes import clean_Transactions
+from src.mlops_credit_scoring.pipelines.feature_engineering.nodes import extract_transactions_features_batch
 
 def test_clean_transactions():
     df = pd.read_csv(full_path + "/Project/MLOps_project/tests/pipelines/sample/sample_transactions.csv") 
