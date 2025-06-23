@@ -1,1 +1,1 @@
-{"X_train_preprocessed": {"rows": 10827, "columns": 38, "file_size": 3412714}, "X_test_preprocessed": {"rows": 1978, "columns": 39, "file_size": 708192}, "y_train_preprocessed": {"rows": 10827, "columns": 1, "file_size": 32493}, "y_test_preprocessed": {"rows": 1978, "columns": 1, "file_size": 5946}}
+{"customer_features": {"rows": 3554, "columns": 26, "file_size": 538553}, "X_train": {"rows": 2843, "columns": 24, "file_size": 372977}, "X_test": {"rows": 711, "columns": 24, "file_size": 93483}}

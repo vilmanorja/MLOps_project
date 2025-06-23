@@ -13,6 +13,7 @@ run_date:
 
 
 target_column: "HasDefault"
+load_from_feature_store: True
 to_feature_store: True
 test_fraction: 0.2
 random_state: 42
