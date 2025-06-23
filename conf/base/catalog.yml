@@ -296,3 +296,9 @@ features_with_predict:
   filepath: data/07_model_output/features_with_predict.csv
   save_args:
     lineterminator: "\n"
+
+y_preds:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/y_preds.csv
+  save_args:
+    lineterminator: "\n"

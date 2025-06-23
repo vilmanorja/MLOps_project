@@ -14,7 +14,7 @@ def create_pipeline(**kwargs) -> Pipeline:
             node(
                 func=model_predict,
                 inputs=["X_test_preprocessed","production_model","production_columns"],
-                outputs=["features_with_predict", "predict_describe"],
+                outputs=["features_with_predict", "predict_describe","y_preds"],
                 name="predict",
             ),
         ]

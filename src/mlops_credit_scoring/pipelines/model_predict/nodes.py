@@ -35,4 +35,4 @@ def model_predict(X: pd.DataFrame,
 
     logger.info('Service predictions created.')
     logger.info('#servings: %s', len(y_pred))
-    return X, describe_servings
+    return X, describe_servings,pd.DataFrame(y_pred, columns=["HasDefault"])
