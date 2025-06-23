@@ -361,13 +361,93 @@ def data_tests(
     context.add_or_update_expectation_suite(expectation_suite=validation_expectation_suite_categorical)
     # context.add_or_update_expectation_suite(expectation_suite=validation_expectation_suite_datetime)
 
-    numerical_feature_descriptions =[]
+    numerical_feature_descriptions = [
+        {
+            "name": "index",
+            "description": """
+                            Index of the event. Key element to make joins.
+                            """
+        },
+        {
+            "name": "avg_monthly_funds",
+            "description": """
+                            Average funds per customer per month
+                            """
+        },
+        {
+            "name": "funds_stability",
+            "description": """
+                            Standard deviation of funds
+                            """
+        },
+        {
+            "name": "avg_monthly_income",
+            "description": """
+                            Average deposits in the customer account per month
+                            """
+        },
+        {
+            "name": "income_stability",
+            "description": """
+                            Standard deviation of income
+                            """
+        },
+        {
+            "name": "avg_monthly_expenses",
+            "description": """
+                            Average spending in the customer account per month
+                            """
+        },
+        {
+            "name": "expenses_stability",
+            "description": """
+                            Average spending per month
+                            """
+        },
+        {
+            "name": "previous_loan_count",
+            "description": """
+                            Number of previous loans the customer has taken
+                            """
+        },
+        {
+            "name": "previous_loans_avg_amount",
+            "description": """
+                            Credit card maximum limit
+                            """
+        },
+        {
+            "name": "previous_loans_std",
+            "description": """
+                            Standard deviation of past loan amounts
+                            """
+        },
+        {
+            "name": "previous_loan_defaults",
+            "description": """
+                            Number of times the customer defaulted on past loans
+                            """
+        },
+        {
+            "name": "active_loans_count",
+            "description": """
+                            Number of loans currently active
+                            """
+        },
+        {
+            "name": "active_loan_amount_total",
+            "description": """
+                            Total outstanding loan balance
+                            """
+        }
+    ]
     categorical_feature_descriptions =[]
     target_description =[]
-    
-    df_target = df[target].reset_index()
-    df_numeric = df[numerical_features].reset_index()
-    df_categorical = df[categorical_features].reset_index()
+
+    df = df.reset_index()
+    df_target = df[target + ['index']]
+    df_numeric = df[numerical_features + ['index']]
+    df_categorical = df[categorical_features + ['index']]
     # df_datetime = df[datetime_features].reset_index()
 
     logger.info(f"Number of columns processed: {len(df_numeric.columns) + len(df_categorical.columns) + len(df_target.columns)} columns.")

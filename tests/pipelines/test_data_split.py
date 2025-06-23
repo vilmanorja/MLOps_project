@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from src.bank_full_project.pipelines.split_train_pipeline.nodes import split_data
+from src.mlops_credit_scoring.pipelines.split_data.nodes import split_data
 
 def test_split_data():
     """Test the split_data function.
