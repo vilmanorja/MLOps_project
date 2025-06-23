@@ -23,8 +23,8 @@ from typing import Dict
 from kedro.pipeline import Pipeline, pipeline
 
 from mlops_credit_scoring.pipelines import (
-    raw_data_tests as raw_data_tests,
-    ingestion as data_ingestion,
+    ingestion as ingestion,
+    features_data_tests as features_data_tests,
     data_cleaning,
     data_unit_tests as data_tests,
     feature_engineering as feature_engineering,
@@ -45,9 +45,9 @@ def register_pipelines() -> Dict[str, Pipeline]:
     Returns:
         A mapping from a pipeline name to a ``Pipeline`` object.
     """
-    raw_data_tests_pipeline = raw_data_tests.create_pipeline()
-    ingestion_pipeline = data_ingestion.create_pipeline()
-    data_unit_tests_pipeline = data_tests.create_pipeline()
+    ingestion_pipeline = ingestion.create_pipeline()
+    features_data_tests_pipeline = features_data_tests.create_pipeline()
+    # data_unit_tests_pipeline = data_tests.create_pipeline()
     data_cleaning_pipeline = data_cleaning.create_pipeline()
     feature_engineering_pipeline = feature_engineering.create_pipeline()
     split_data_pipeline = split_data.create_pipeline()
@@ -61,10 +61,10 @@ def register_pipelines() -> Dict[str, Pipeline]:
     model_predict_pipeline = model_predict.create_pipeline()
 
     return {
-        "raw_data_tests": raw_data_tests_pipeline,
         "ingestion": ingestion_pipeline,
+        "features_data_tests": features_data_tests_pipeline,
         "data_cleaning": data_cleaning_pipeline,
-        "data_unit_tests": data_unit_tests_pipeline,
+        # "data_unit_tests": data_unit_tests_pipeline,
         "split_data": split_data_pipeline,
         "feature_engineering":feature_engineering_pipeline,
         "feature_preprocessing_train": preprocess_train_pipeline,
@@ -72,16 +72,18 @@ def register_pipelines() -> Dict[str, Pipeline]:
         "model_selection": model_selection,
         "model_train": model_train,
         "feature_selection":feature_selection,
-        "production_full_train_process" : (raw_data_tests_pipeline
+        "production_full_train_process" : (ingestion_pipeline
                                            +data_cleaning_pipeline
                                            +feature_engineering_pipeline
+                                           +features_data_tests_pipeline
                                            +split_data_pipeline 
                                            +feature_selection
                                            +preprocess_train_pipeline
                                              + model_train),
-        "production_full_model_selection_process":(raw_data_tests_pipeline
+        "production_full_model_selection_process":(ingestion_pipeline
                                            +data_cleaning_pipeline
                                            +feature_engineering_pipeline
+                                           +features_data_tests_pipeline
                                            +split_data_pipeline 
                                            +feature_selection
                                            +preprocess_train_pipeline

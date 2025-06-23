@@ -84,17 +84,19 @@ st.json(param)
 
 
 existent_pipelines = ["ingestion",
-                      "split_data",
-                      "data_unit_tests",
-                      "preprocess_train",
-                      "split_train",
-                      "model_selection",
-                      "model_train",
-                      "feature_selection",
-                      "production_full_train_process",
-                      "preprocess_batch",
-                      "production_full_prediction_process"
-                      ]
+        "features_data_tests",
+        "data_cleaning",
+        "split_data",
+        "feature_engineering",
+        "feature_preprocessing_train",
+        "model_selection",
+        "model_train",
+        "feature_selection",
+        "production_full_train_process",
+        "production_full_model_selection_process",
+        "feature_preprocessing_test",
+        "model_predict",
+        "production_full_prediction_process"]
 
 if 'button_model' not in st.session_state:
     st.session_state.button_model = False
