@@ -17,7 +17,6 @@ import yaml
 import sys 
 
 full_path = os.getcwd()
-print(full_path)
 sys.path.append(os.path.abspath("src"))
 
 from mlops_credit_scoring.pipelines.data_cleaning.nodes import clean_Transactions

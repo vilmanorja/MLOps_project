@@ -24,11 +24,11 @@ from kedro.pipeline import Pipeline, pipeline
 
 from mlops_credit_scoring.pipelines import (
     ingestion as ingestion,
-    features_data_tests as features_data_tests,
     data_cleaning,
-    data_unit_tests as data_tests,
+    # data_unit_tests as data_tests,
     feature_engineering as feature_engineering,
-    feature_preprocessing_train ,
+    features_data_tests as features_data_tests,
+    feature_preprocessing_train,
     #split_train_pipeline as split_train,
     model_selection as model_selection_pipeline,
     model_train as model_train_pipeline,
