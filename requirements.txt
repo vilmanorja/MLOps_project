@@ -22,3 +22,4 @@ ucimlrepo>=0.0.7
 vadersentiment>=3.3.2
 ydata-profiling>=4.16.1
 streamlit-ydata-profiling>=0.2.1
+kaleido

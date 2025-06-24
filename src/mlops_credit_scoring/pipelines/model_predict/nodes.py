@@ -27,12 +27,20 @@ def model_predict(X: pd.DataFrame,
     
     y_pred = model.predict(X[columns])
 
-    # Create dataframe with predictions
-    X['y_pred'] = y_pred
     
+    # Predict probability (for class 1)
+    if hasattr(model, "predict_proba"):
+        y_pred_proba = model.predict_proba(X[columns])[:, 1]
+    else:
+        raise AttributeError("Model does not support predict_proba().")
+
+    # Add predictions to dataframe
+    X['y_pred'] = y_pred
+    X['y_pred_proba'] = y_pred_proba
+
     # Create dictionary with predictions
     describe_servings = X.describe().to_dict()
 
     logger.info('Service predictions created.')
     logger.info('#servings: %s', len(y_pred))
-    return X, describe_servings,pd.DataFrame(y_pred, columns=["HasDefault"])
+    return X, describe_servings,pd.DataFrame(y_pred, columns=["HasDefault"]), pd.DataFrame(y_pred_proba, columns=["HasDefault"])

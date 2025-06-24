@@ -35,7 +35,8 @@ from mlops_credit_scoring.pipelines import (
     feature_selection as feature_selection_pipeline,
     split_data,
     feature_preprocessing_test,
-    model_predict
+    model_predict,
+    data_drift,
 
 )
 
@@ -59,7 +60,8 @@ def register_pipelines() -> Dict[str, Pipeline]:
     feature_selection = feature_selection_pipeline.create_pipeline()
 
     model_predict_pipeline = model_predict.create_pipeline()
-
+    
+    data_drift_pipeline = data_drift.create_pipeline()
     return {
         "ingestion": ingestion_pipeline,
         "features_data_tests": features_data_tests_pipeline,
@@ -77,19 +79,20 @@ def register_pipelines() -> Dict[str, Pipeline]:
                                            +feature_engineering_pipeline
                                            +features_data_tests_pipeline
                                            +split_data_pipeline 
-                                           +feature_selection
                                            +preprocess_train_pipeline
+                                           +feature_selection
                                              + model_train),
         "production_full_model_selection_process":(ingestion_pipeline
                                            +data_cleaning_pipeline
                                            +feature_engineering_pipeline
                                            +features_data_tests_pipeline
                                            +split_data_pipeline 
-                                           +feature_selection
                                            +preprocess_train_pipeline
+                                           +feature_selection
                                              + model_selection),
         "feature_preprocessing_test": preprocess_test_pipeline,
         "model_predict" : model_predict_pipeline,
         "production_full_prediction_process" : preprocess_test_pipeline + model_predict_pipeline,
+        "data_drift": data_drift_pipeline,
   
     }

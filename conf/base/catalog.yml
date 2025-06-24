@@ -302,3 +302,40 @@ y_preds:
   filepath: data/07_model_output/y_preds.csv
   save_args:
     lineterminator: "\n"
+
+y_pred_proba:
+  type: pandas.CSVDataset
+  filepath: data/07_model_output/y_pred_proba.csv
+  save_args:
+    lineterminator: "\n"
+
+
+# Merged output
+customers_pred_test:
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/customers_pred_test.csv
+
+# Drift outputs
+drift_univariate_results:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/drift_univariate_results.csv
+  save_args:
+    lineterminator: "\n"
+
+drift_multivariate_results:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/drift_multivariate_results.csv
+  save_args:
+    lineterminator: "\n"
+
+estimated_performance_results:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/estimated_performance_results.csv
+  save_args:
+    lineterminator: "\n"
+
+# Drift plots
+univariate_drift_plots:
+  type: pickle.PickleDataset
+  filepath: data/08_reporting/drift_plots.pkl
+
