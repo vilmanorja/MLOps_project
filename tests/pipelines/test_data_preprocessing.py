@@ -13,21 +13,31 @@ import pytest
 import pandas as pd
 import numpy as np
 import os
+import yaml
+import sys 
 
-from src.bank_full_project.pipelines.preprocessing_train.nodes import clean_data, feature_engineer
+full_path = os.getcwd()
+sys.path.append(full_path + '/Project/MLOps_project/src')
+# sys.path.append('/Users/vilmanorja/Library/CloudStorage/OneDrive-AaltoUniversity/Yliopisto/Maisterikurssit/Exchange courses/MLOps/Project/MLOps_project/src')
 
-def test_clean_date_type():
-    df = pd.read_csv("./tests/pipelines/sample/sample.csv") 
-    df_transformed, describe_to_dict_verified  = clean_data(df)
-    isinstance(describe_to_dict_verified, dict)
+from src.mlops_credit_scoring.pipelines.data_cleaning.nodes import clean_Transactions
+from src.mlops_credit_scoring.pipelines.feature_engineering.nodes import extract_transactions_features_batch
 
-def test_clean_date_null():
-    df = pd.read_csv("./tests/pipelines/sample/sample.csv") 
-    df_transformed, describe_to_dict_verified = clean_data(df)
-    assert [col for col in df_transformed.columns if df_transformed[col].isnull().any()] == []
+def test_clean_transactions():
+    df = pd.read_csv(full_path + "/Project/MLOps_project/tests/pipelines/sample/sample_transactions.csv") 
+    df_transformed  = clean_Transactions(df)
+    assert [col for col in ["CustomerIdCreditNew", "CustomerIdDebitNew"] if df_transformed[col].isnull().any()] == []
+    assert(isinstance(df_transformed, pd.DataFrame))
 
-def test_feature_engineering_month():
-    df = pd.read_csv("./tests/pipelines/sample/sample.csv") 
-    df_final, transformation = feature_engineer(df)
-    assert(len(df_final["month"].unique().tolist()) <= 12)
+def test_feature_engineering_transactions():
+    run_date =  ['20230630', '20230731', '20230831', '20230930', '20231231', '20231130', '20240229', '20240131', '20240331', '20240430', '20240531']
+    df = pd.read_csv(full_path + "/Project/MLOps_project/tests/pipelines/sample/sample_transactions_cleaned.csv") 
+    df_transformed = extract_transactions_features_batch(df, run_date)
+    assert(isinstance(df_transformed, dict))
+    assert(set(['CustomerId','Avg_Monthly_Income','Income_Stability','Avg_Monthly_expenses','Expenses_Stability','run_date']).issubset(df_transformed['customer_transactional_summary_20230630'].columns))
 
+print(f'Test cleaning')
+test_clean_transactions()
+print(f'Test engineering')
+test_feature_engineering_transactions()
+print(f'All passed')

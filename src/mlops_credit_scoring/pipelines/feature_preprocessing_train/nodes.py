@@ -41,30 +41,27 @@ def clean_customer_features_train(X_train: pd.DataFrame, y_train: pd.DataFrame) 
     X_train_cleaned = X_train.drop_duplicates(keep='first')
     y_train_cleaned = y_train.loc[X_train_cleaned.index]
 
-    #Outliers limit
-    limits = {
-    'CreditAmount': 6e8,
-    'NumberOfInstallmentsToPay': 150,
-    'Avg_Monthly_Income': 4e8,
-    'Avg_Monthly_expenses':4e8,
-    'Age': 100,
-    'Expenses_Stability':1.5e8,
-    'Avg_Monthly_Funds': 2.5e8,
-    'Funds_Stability': 5e7,
-    'Previous_Loan_Count': 60,
-    'Previous_Loans_Avg_Amount':3e8,
-    'Previous_Loans_Std': 1e8,
-    'Active_Loans_Count':20,
-    'Active_Loan_Amount_Total': 1.5e8,
-    'YrNetMonthlyIn':1.5e7    
-    }
-
-
     #Removing outliers
-    for column, upper_limit in limits.items():
-        X_train_cleaned = X_train_cleaned[X_train_cleaned[column] <= upper_limit]
+    Q1_age = X_train_cleaned['Age'].quantile(0.25)
+    Q3_age = X_train_cleaned['Age'].quantile(0.75)
+    IQR_age = Q3_age - Q1_age
+    lower_limit_age = Q1_age - 1.5 * IQR_age
+    upper_limit_age = Q3_age + 1.5 * IQR_age
+    X_train_cleaned = X_train_cleaned[(X_train_cleaned['Age'] >= lower_limit_age) & (X_train_cleaned['Age'] <= upper_limit_age)]
 
-    X_train_cleaned = X_train_cleaned[X_train_cleaned['Age'] > 0] 
+    columns_to_filter = [
+        'CreditAmount', 'NumberOfInstallmentsToPay', 'Avg_Monthly_Income', 
+        'Avg_Monthly_expenses', 'Expenses_Stability', 'Avg_Monthly_Funds',
+        'Funds_Stability', 'Previous_Loan_Count', 'Previous_Loans_Avg_Amount', 
+        'Previous_Loans_Std', 'Active_Loans_Count', 'Active_Loan_Amount_Total', 
+        'YrNetMonthlyIn'
+    ]
+
+    # Remove outliers based on the 99th percentile for specified columns
+    for column in columns_to_filter:
+        upper_percentile = X_train_cleaned[column].quantile(0.99)  # 99% superior
+        X_train_cleaned = X_train_cleaned[X_train_cleaned[column] <= upper_percentile]
+ 
 
     y_train_cleaned = y_train_cleaned.loc[X_train_cleaned.index]
 
