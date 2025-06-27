@@ -63,6 +63,18 @@ def register_pipelines() -> Dict[str, Pipeline]:
     
     data_drift_pipeline = data_drift.create_pipeline()
     return {
+        "__default__" : (ingestion_pipeline
+                                           +data_cleaning_pipeline
+                                           +feature_engineering_pipeline
+                                           +features_data_tests_pipeline
+                                           +split_data_pipeline 
+                                           +preprocess_train_pipeline
+                                           +preprocess_test_pipeline
+                                           +feature_selection
+                                           + model_selection
+                                            + model_train
+                                            +model_predict_pipeline
+                                            +data_drift_pipeline),
         "ingestion": ingestion_pipeline,
         "features_data_tests": features_data_tests_pipeline,
         "data_cleaning": data_cleaning_pipeline,
@@ -80,6 +92,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
                                            +features_data_tests_pipeline
                                            +split_data_pipeline 
                                            +preprocess_train_pipeline
+                                           +preprocess_test_pipeline
                                            +feature_selection
                                              + model_train),
         "production_full_model_selection_process":(ingestion_pipeline

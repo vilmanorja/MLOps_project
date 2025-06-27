@@ -15,7 +15,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                 func= data_tests,
                 inputs=["customer_features", "parameters"],
                 outputs= "reporting_tests",
-                name="ingestion",
+                name="Features_expectations",
             ),
 
         ]
