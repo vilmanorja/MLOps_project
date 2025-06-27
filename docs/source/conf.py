@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 
-# bank_full_project documentation build
+# mlops_credit_scoring documentation build
 # configuration file, created by sphinx-quickstart.
 #
 # This file is execfile()d with the current directory set to its
@@ -21,11 +21,11 @@ import re
 
 from kedro.framework.cli.utils import find_stylesheets
 
-from bank_full_project import __version__ as release
+from mlops_credit_scoring import __version__ as release
 
 # -- Project information -----------------------------------------------------
 
-project = "bank_full_project"
+project = "mlops_credit_scoring"
 author = "Kedro"
 
 # The short X.Y version.
@@ -119,7 +119,7 @@ html_show_sourcelink = False
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "bank_full_projectdoc"
+htmlhelp_basename = "mlops_credit_scoring"
 
 # -- Options for LaTeX output ------------------------------------------------
 
@@ -147,8 +147,8 @@ latex_elements = {
 latex_documents = [
     (
         master_doc,
-        "bank_full_project.tex",
-        "bank_full_project Documentation",
+        "mlops_credit_scoring.tex",
+        "mlops_credit_scoring Documentation",
         "Kedro",
         "manual",
     )
@@ -161,8 +161,8 @@ latex_documents = [
 man_pages = [
     (
         master_doc,
-        "bank_full_project",
-        "bank_full_project Documentation",
+        "mlops_credit_scoring",
+        "mlops_credit_scoring Documentation",
         [author],
         1,
     )
@@ -176,11 +176,11 @@ man_pages = [
 texinfo_documents = [
     (
         master_doc,
-        "bank_full_project",
-        "bank_full_project Documentation",
+        "mlops_credit_scoring",
+        "mlops_credit_scoring Documentation",
         author,
-        "bank_full_project",
-        "Project bank_full_project codebase.",
+        "mlops_credit_scoring",
+        "Project mlops_credit_scoring codebase.",
         "Data-Science",
     )
 ]
