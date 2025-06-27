@@ -6,7 +6,8 @@ from sklearn.feature_selection import SelectKBest, f_classif, RFE, SelectFromMod
 from sklearn.linear_model import LassoCV
 from sklearn.ensemble import RandomForestClassifier
 from collections import Counter
-
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 def feature_selection(
@@ -73,8 +74,21 @@ def feature_selection(
 
     final_features = [f for f in features_selected if f not in features_to_drop]
 
-    
-    print('-------------------------')
-    print(f"Selected features: {final_features}")
+
+    ranking_plot_df = ranking_df.loc[final_features].copy()
+    ranking_plot_df = ranking_plot_df.sort_values("combined_rank", ascending=True)
+
+    plt.figure(figsize=(10, 6))
+    sns.barplot(
+        x="combined_rank",
+        y=ranking_plot_df.index,
+        data=ranking_plot_df,
+        palette="viridis"
+    )
+    plt.title("Feature Importance (Combined Ranking)")
+    plt.xlabel("Combined Rank (lower is better)")
+    plt.ylabel("Features")
+    plt.tight_layout()
+    plt.show()
 
     return final_features
