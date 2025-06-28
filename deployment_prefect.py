@@ -3,7 +3,7 @@ from prefect.client.schemas.schedules import CronSchedule
 from flows.kedro_prefect_flow import (
     full_pipeline,
     flow_full_processing,
-    flow_model_selection,
+    flow_model_train,
     flow_prediction,
     flow_data_ingestion
 )
@@ -30,13 +30,13 @@ Deployment.build_from_flow(
     tags=["training-preprocess"]
 ).apply()
 
-# Deployment 3: Model Selection - Monthly on the 1st at 9 AM Lisbon Time
+# Deployment 3: Model training - Monthly on the 1st at 9 AM Lisbon Time
 Deployment.build_from_flow(
-    flow=flow_model_selection,
-    name="model-selection-monthly",
+    flow=flow_model_train,
+    name="model-train-monthly",
     work_queue_name="default",
     schedule=CronSchedule(cron="0 9 1 * *", timezone="Europe/Lisbon"), 
-    tags=["model-selection"]
+    tags=["model-train"]
 ).apply()
 
 # Deployment 4: Prediction - Monthly on the 1st at 12 PM Lisbon Time

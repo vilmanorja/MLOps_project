@@ -65,7 +65,7 @@ def flow_full_processing():
 
   
 @flow(name="Model Training Flow")
-def flow_model_selection():
+def flow_model_train():
     pipeline_flow("feature_selection")
     pipeline_flow("model_selection")
     pipeline_flow("model_train")
@@ -84,11 +84,11 @@ def full_pipeline():
     """
     flow_data_ingestion()
     flow_full_processing()
-    flow_model_selection()
+    flow_model_train()
     flow_prediction()
 
 # def full_pipeline(run_dates: Optional[List[str]] = None):
     # flow_data_ingestion(run_dates)
     # flow_full_processing()
-    # flow_model_selection()
+    # flow_model_train()
     # flow_prediction()
