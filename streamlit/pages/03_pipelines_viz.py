@@ -9,7 +9,7 @@ import requests
 package_name = Path(__file__).parent.name
 configure_project(package_name)
 
-KEDRO_VIZ_SERVER_URL = 'http://127.0.0.1:4143/'
+KEDRO_VIZ_SERVER_URL = 'http://127.0.0.1:4141/'
 MLFLOW_SERVER_URL = 'http://127.0.0.1:8080/'
 
 if 'kedro_viz_started' not in st.session_state:
@@ -72,7 +72,7 @@ def show_pipeline_viz():
     
     reporter = st.empty()
     
-    st.write("Visualization available at http://localhost:4143/")
+    st.write("Visualization available at http://localhost:4141/")
 
     launch_kedro_viz_server(reporter)
     
