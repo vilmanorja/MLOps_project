@@ -437,7 +437,13 @@ def data_tests(
 
     df = df.reset_index()
     df_target = df[target + ['index']]
+    df_target=df_target.astype(np.int64)
     df_numeric = df[numerical_features + ['index']]
+
+    for col in df_numeric.columns:
+        if pd.api.types.is_integer_dtype(df_numeric[col]):
+            df_numeric[col] = df_numeric[col].astype(np.int64) 
+
     df_categorical = df[categorical_features + ['index']]
     # df_datetime = df[datetime_features].reset_index()
 

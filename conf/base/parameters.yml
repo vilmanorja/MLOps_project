@@ -20,8 +20,6 @@ test_fraction: 0.2
 random_state: 42
 run_name: "full_project"
 use_feature_selection: True
-#num_of_Importances___
-feature_selection: "rfe"
 num_methods: 2
 model_name: "loan_model"
 baseline_model_params:
