@@ -13,7 +13,7 @@ run_date:
 
 
 target_column: "HasDefault"
-load_from_feature_store: True
+load_from_feature_store: False
 reference_split_date: "2023-09-30"
 to_feature_store: True
 test_fraction: 0.2

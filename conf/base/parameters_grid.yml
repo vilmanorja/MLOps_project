@@ -12,12 +12,6 @@ hyperparameters:
     max_features: [0.5, 0.7, 1]
     random_state: [42]
 
-  LogisticRegression:
-    C: [0.01, 0.1, 1.0, 10.0]
-    penalty: ['l1', 'l2']
-    solver: ['liblinear']
-    random_state: [42]
-    class_weight: ['balanced']
 
   XGBClassifier:
     n_estimators: [ 300,500,1000]
