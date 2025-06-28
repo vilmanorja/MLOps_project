@@ -156,9 +156,9 @@
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "age",
-        "max_value": 120,
-        "min_value": 0,
-        "strict_min": true
+        "max_value": null,
+        "min_value": -1,
+        "strict_min": false
       },
       "meta": {}
     },

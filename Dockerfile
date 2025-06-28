@@ -1,9 +1,16 @@
-ARG BASE_IMAGE=python:3.9-slim
+ARG BASE_IMAGE=python:3.11-slim
 FROM $BASE_IMAGE as runtime-environment
 
 # install project requirements
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    python3-dev \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+    
 COPY requirements.txt /tmp/requirements.txt
-RUN python -m pip install -U "pip>=21.2,<23.2"
+RUN python -m pip install -U "pip>=21.2"
 RUN pip install --no-cache-dir -r /tmp/requirements.txt && rm -f /tmp/requirements.txt
 
 # add kedro user

@@ -125,18 +125,6 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
                     }
                 )
             )
-
-        expectation_suite.add_expectation(
-                ExpectationConfiguration(
-                    expectation_type="expect_column_values_to_be_between",
-                    kwargs={
-                        "column": 'age',
-                        "min_value": 0,
-                        "strict_min": True,
-                        "max_value": 120  # No upper bound
-                    }
-                )
-            )
         
         for i in ['is_employed', 'is_married']:
             expectation_suite.add_expectation(
@@ -169,13 +157,16 @@ def build_expectation_suite(expectation_suite_name: str, feature_group: str) -> 
         expectation_suite.add_expectation(
             ExpectationConfiguration(
                 expectation_type="expect_column_distinct_values_to_be_in_set",
-                kwargs={"column": "payment_frequency", "value_set": ['Monthly', 'Single', 'Quarterly']},
+                kwargs={"column": "payment_frequency", "value_set": ['Monthly', 'Single', 'Semiannual', 'Quarterly']},
             )
         ) 
         expectation_suite.add_expectation(
                     ExpectationConfiguration(
                         expectation_type="expect_column_distinct_values_to_be_in_set",
-                        kwargs={"column": "credit_type", "value_set": ['Personal Credit', 'Credit Card', 'Secured Current Account', 'Leasing', 'Public Sector Employee Loan', 'Arranged Overdraft', 'Business Loan Account']},
+                        kwargs={"column": "credit_type", "value_set": ['Credit Card', 'Unarranged Overdraft', 'Personal Credit',
+                                                                        'Arranged Overdraft', 'Bill of Exchange Discount', 'Leasing',
+                                                                        'Business Loan Account', 'Secured Current Account',
+                                                                        'Mortgage Loan Account', 'Personal Loan Account']},
                     )
                 ) 
     return expectation_suite

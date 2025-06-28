@@ -163,3 +163,6 @@ mlruns/*
 
 project_local
 .DS_Store
+*/*/*/X_train_processed.csv
+*/*/*/y_train_processed.csv
+ml_artifacts/*

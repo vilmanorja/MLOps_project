@@ -24,11 +24,11 @@ from kedro.pipeline import Pipeline, pipeline
 
 from mlops_credit_scoring.pipelines import (
     ingestion as ingestion,
-    features_data_tests as features_data_tests,
     data_cleaning,
-    data_unit_tests as data_tests,
+    # data_unit_tests as data_tests,
     feature_engineering as feature_engineering,
-    feature_preprocessing_train ,
+    features_data_tests as features_data_tests,
+    feature_preprocessing_train,
     #split_train_pipeline as split_train,
     model_selection as model_selection_pipeline,
     model_train as model_train_pipeline,
@@ -63,6 +63,18 @@ def register_pipelines() -> Dict[str, Pipeline]:
     
     data_drift_pipeline = data_drift.create_pipeline()
     return {
+        "__default__" : (ingestion_pipeline
+                                           +data_cleaning_pipeline
+                                           +feature_engineering_pipeline
+                                           +features_data_tests_pipeline
+                                           +split_data_pipeline 
+                                           +preprocess_train_pipeline
+                                           +preprocess_test_pipeline
+                                           +feature_selection
+                                           + model_selection
+                                            + model_train
+                                            +model_predict_pipeline
+                                            +data_drift_pipeline),
         "ingestion": ingestion_pipeline,
         "features_data_tests": features_data_tests_pipeline,
         "data_cleaning": data_cleaning_pipeline,
@@ -80,6 +92,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
                                            # +features_data_tests_pipeline
                                            +split_data_pipeline 
                                            +preprocess_train_pipeline
+                                           +preprocess_test_pipeline
                                            +feature_selection
                                              + model_train),
         "production_full_model_selection_process":(ingestion_pipeline

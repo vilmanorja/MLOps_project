@@ -33,6 +33,7 @@
         "value_set": [
           "Monthly",
           "Single",
+          "Semiannual",
           "Quarterly"
         ]
       },
@@ -43,13 +44,16 @@
       "kwargs": {
         "column": "credit_type",
         "value_set": [
-          "Personal Credit",
           "Credit Card",
-          "Secured Current Account",
-          "Leasing",
-          "Public Sector Employee Loan",
+          "Unarranged Overdraft",
+          "Personal Credit",
           "Arranged Overdraft",
-          "Business Loan Account"
+          "Bill of Exchange Discount",
+          "Leasing",
+          "Business Loan Account",
+          "Secured Current Account",
+          "Mortgage Loan Account",
+          "Personal Loan Account"
         ]
       },
       "meta": {}

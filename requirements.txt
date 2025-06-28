@@ -2,7 +2,7 @@ confluent-kafka>=2.9.0
 evidently>=0.6.6
 expectations>=1.0.1
 great>=0.2.0
-great-expectations>=0.18.12
+great-expectations==0.18.12
 hopsworks==4.2
 ipykernel>=6.29.5
 kaleido==0.2.0

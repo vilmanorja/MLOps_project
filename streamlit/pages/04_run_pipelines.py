@@ -7,7 +7,6 @@ import sys
 from PIL import Image
 import pandas as pd
 from kedro.io import DataCatalog
-from streamlit_ydata_profiling import st_profile_report
 import time
 import pandas as pd
 import requests

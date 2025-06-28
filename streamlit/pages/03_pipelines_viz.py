@@ -1,7 +1,6 @@
 # streamlit libray
 import streamlit as st
 import streamlit.components.v1 as components
-from streamlit_ydata_profiling import st_profile_report
 from pathlib import Path
 from kedro.framework.project import configure_project
 import time
@@ -10,7 +9,7 @@ import requests
 package_name = Path(__file__).parent.name
 configure_project(package_name)
 
-KEDRO_VIZ_SERVER_URL = 'http://127.0.0.1:4141/'
+KEDRO_VIZ_SERVER_URL = 'http://127.0.0.1:4143/'
 MLFLOW_SERVER_URL = 'http://127.0.0.1:8080/'
 
 if 'kedro_viz_started' not in st.session_state:
@@ -73,7 +72,7 @@ def show_pipeline_viz():
     
     reporter = st.empty()
     
-    st.write("Visualization available at http://localhost:4141/")
+    st.write("Visualization available at http://localhost:4143/")
 
     launch_kedro_viz_server(reporter)
     

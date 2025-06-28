@@ -36,7 +36,7 @@ loggers:
   kedro:
     level: INFO
 
-  bank_full_project:
+  mlops_credit_scoring:
     level: INFO
 
 root:
