@@ -45,7 +45,7 @@ def split_data(
         df = pd.merge(df, fg_cat, left_on='index', right_on='index')
 
         column_map = {
-            'index': 'index',  # if still needed
+            #'index': 'index',  # if still needed
             'has_default': 'HasDefault',
             'customer_id': 'CustomerId',
             'credit_amount': 'CreditAmount',
@@ -73,12 +73,12 @@ def split_data(
             'seg_group': 'SegGroup',
             'a_m_l_risk_rating': 'AMLRiskRating'
         }
-
+        df = df.drop(columns=['index'], errors='ignore')
         df = df.rename(columns=column_map)
     else:
         df = data
 
-    assert [col for col in df.columns if df[col].isnull().any()] == []
+    assert [col for col in df.columns if df[col].isnull().any()] == [] 
     y = df[parameters["target_column"]]
     X = df.drop(columns=parameters["target_column"], axis=1)
     X = X.drop(columns="CustomerId", axis=1)

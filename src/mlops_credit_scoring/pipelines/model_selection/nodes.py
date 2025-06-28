@@ -44,7 +44,6 @@ def model_selection(X_train: pd.DataFrame,
     neg, pos = np.bincount(y_train)
     scale_pos_weight = neg / pos
     models_dict = {
-        'LogisticRegression': LogisticRegression(),
         'RandomForestClassifier': RandomForestClassifier(),
         'GradientBoostingClassifier': GradientBoostingClassifier(),
         'XGBClassifier': XGBClassifier(use_label_encoder=False, eval_metric="logloss", random_state=42,scale_pos_weight=scale_pos_weight)
