@@ -1,4 +1,4 @@
-# bank_full_project
+# mlops_credit_scoring
 
 ## Overview
 
