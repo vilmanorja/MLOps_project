@@ -15,7 +15,7 @@ run_date:
 target_column: "HasDefault"
 load_from_feature_store: True
 reference_split_date: "2023-09-30"
-to_feature_store: True
+to_feature_store: False
 test_fraction: 0.2
 random_state: 42
 run_name: "full_project"

@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-# import pytest
+import pytest
 import pickle
 import warnings
 import mlflow,yaml
@@ -20,7 +20,7 @@ from mlops_credit_scoring.pipelines.model_selection.nodes import model_selection
 
 logger = logging.getLogger(__name__)
 
-# @pytest.mark.slow
+@pytest.mark.slow
 def test_model_selection():
     """
     Test that the model selection node returns a model with a score
@@ -55,6 +55,6 @@ def test_model_selection():
     # Check that the returned value is a dictionary
     assert isinstance(model, RandomForestClassifier) or isinstance(model, GradientBoostingClassifier) or isinstance(model, LogisticRegression) or isinstance(model, XGBClassifier)
 
-print('Test model selection')
-test_model_selection()
-print('Model selection succeeded')
+# print('Test model selection')
+# test_model_selection()
+# print('Model selection succeeded')

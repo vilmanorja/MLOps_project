@@ -16,6 +16,9 @@ openai>=1.70.0
 optuna>=4.2.1
 pip>=25.0.1
 prefect>=2.20.17
+pytest==8.4.1
+coverage==7.9.1
+pytest-cov==6.2.1
 shap>=0.47.1
 streamlit>=1.44.1
 ucimlrepo>=0.0.7

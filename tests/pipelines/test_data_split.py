@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import pytest
 
 import os
 import sys 
@@ -41,9 +42,9 @@ def test_split_data():
     assert y_train.shape == (80,)
     assert y_test.shape == (20,)
 
-print(f'Test cleaning')
-test_split_data()
-print(f'All passed')
+# print(f'Test cleaning')
+# test_split_data()
+# print(f'All passed')
 
 
 

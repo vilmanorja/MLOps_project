@@ -35,8 +35,8 @@ def test_feature_engineering_transactions():
     assert(isinstance(df_transformed, dict))
     assert(set(['CustomerId','Avg_Monthly_Income','Income_Stability','Avg_Monthly_expenses','Expenses_Stability','run_date']).issubset(df_transformed['customer_transactional_summary_20240131'].columns))
 
-print(f'Test cleaning')
-test_clean_transactions()
-print(f'Test engineering')
-test_feature_engineering_transactions()
-print(f'All passed')
+# print(f'Test cleaning')
+# test_clean_transactions()
+# print(f'Test engineering')
+# test_feature_engineering_transactions()
+# print(f'All passed')
